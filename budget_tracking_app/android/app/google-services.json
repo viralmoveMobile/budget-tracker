@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "202988374491",
+    "project_id": "everydayexpenses-d4e7d",
+    "storage_bucket": "everydayexpenses-d4e7d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:202988374491:android:fe3d6e6da56fdbc45e7ffe",
+        "android_client_info": {
+          "package_name": "com.viralmove.everydayexpenses"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "202988374491-g34620c1bsepmvkhrbuufc82crmttleg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.viralmove.everydayexpenses",
+            "certificate_hash": "5485839933e2a0d53f2d5d4002252785143546d6"
+          }
+        },
+        {
+          "client_id": "202988374491-bt8a1d0tldqsm6b8467hdrpmf2ptv5h9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_9RZ2EjIBGehMO-SvqXquy9SzGruFSWs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "202988374491-bt8a1d0tldqsm6b8467hdrpmf2ptv5h9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

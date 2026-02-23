@@ -1,0 +1,27 @@
+﻿Analyzing transfer_funds_sheet.dart...                          
+
+  error - The property 'id' can't be unconditionally accessed because the receiver can be 'null' - lib\features\accounts\presentation\widgets\transfer_funds_sheet.dart:85:34 - unchecked_use_of_nullable_value
+  error - The property 'name' can't be unconditionally accessed because the receiver can be 'null' - lib\features\accounts\presentation\widgets\transfer_funds_sheet.dart:87:34 - unchecked_use_of_nullable_value
+  error - The property 'balance' can't be unconditionally accessed because the receiver can be 'null' - lib\features\accounts\presentation\widgets\transfer_funds_sheet.dart:87:49 - unchecked_use_of_nullable_value
+  error - The property 'id' can't be unconditionally accessed because the receiver can be 'null' - lib\features\accounts\presentation\widgets\transfer_funds_sheet.dart:102:34 - unchecked_use_of_nullable_value
+  error - The property 'name' can't be unconditionally accessed because the receiver can be 'null' - lib\features\accounts\presentation\widgets\transfer_funds_sheet.dart:103:39 - unchecked_use_of_nullable_value
+   info - Statements in an if should be enclosed in a block - lib\features\accounts\presentation\widgets\transfer_funds_sheet.dart:123:23 - curly_braces_in_flow_control_structures
+  error - The property 'id' can't be unconditionally accessed because the receiver can be 'null' - lib\features\accounts\presentation\widgets\transfer_funds_sheet.dart:127:56 - unchecked_use_of_nullable_value
+   info - Statements in an if should be enclosed in a block - lib\features\accounts\presentation\widgets\transfer_funds_sheet.dart:129:25 - curly_braces_in_flow_control_structures
+
+flutter : 8 issues found. (ran 
+in 3.2s)
+At line:1 char:1
++ flutter analyze --no-pub e:\K
+alpa\ViralMove\Projects\BudgetT
+rackingAp ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~
+    + CategoryInfo          :  
+   NotSpecified: (8 issues fo  
+  und. (ran in 3.2s):String)   
+  [], RemoteException
+    + FullyQualifiedErrorId :  
+   NativeCommandError
+ 
