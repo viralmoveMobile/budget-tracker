@@ -21,7 +21,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 22,
+      version: 23,
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
       onOpen: (db) async {
@@ -249,6 +249,42 @@ class DatabaseHelper {
     if (oldVersion < 22) {
       await _migrateToV22(db);
     }
+    if (oldVersion < 23) {
+      await _migrateToV23(db);
+    }
+  }
+
+  Future<void> _migrateToV23(Database db) async {
+    print(
+        'Migrating holiday_expenses to v23: making originalAmount nullable...');
+    await db.transaction((txn) async {
+      await txn.execute(
+          'ALTER TABLE holiday_expenses RENAME TO holiday_expenses_old');
+      const idType = 'TEXT PRIMARY KEY';
+      const textType = 'TEXT NOT NULL';
+      const doubleType = 'REAL NOT NULL';
+      const textNullableType = 'TEXT';
+      await txn.execute('''
+CREATE TABLE holiday_expenses (
+  id $idType,
+  userId TEXT,
+  holidayId $textType,
+  amount $doubleType,
+  originalAmount REAL,
+  currency $textType,
+  category $textType,
+  date $textType,
+  description $textType,
+  receiptPath $textNullableType,
+  FOREIGN KEY (holidayId) REFERENCES holidays (id) ON DELETE CASCADE
+)
+''');
+      await txn.execute('''
+        INSERT INTO holiday_expenses (id, userId, holidayId, amount, originalAmount, currency, category, date, description, receiptPath)
+        SELECT id, userId, holidayId, amount, originalAmount, currency, category, date, description, receiptPath FROM holiday_expenses_old
+      ''');
+      await txn.execute('DROP TABLE holiday_expenses_old');
+    });
   }
 
   Future<void> _migrateToV20(Database db) async {
@@ -700,7 +736,7 @@ CREATE TABLE holiday_expenses (
   userId TEXT,
   holidayId $textType,
   amount $doubleType,
-  originalAmount $doubleType,
+  originalAmount REAL,
   currency $textType,
   category $textType,
   date $textType,

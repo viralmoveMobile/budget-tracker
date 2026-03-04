@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 import '../providers/holiday_provider.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/models/holiday.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class AddHolidaySheet extends ConsumerStatefulWidget {
   const AddHolidaySheet({super.key});
@@ -63,15 +64,22 @@ class _AddHolidaySheetState extends ConsumerState<AddHolidaySheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: AppTheme.getSurfaceColor(context),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, -5),
+          ),
+        ],
       ),
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
         left: 24,
         right: 24,
-        top: 24,
+        top: 12,
       ),
       child: Form(
         key: _formKey,
@@ -80,6 +88,18 @@ class _AddHolidaySheetState extends ConsumerState<AddHolidaySheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Drag Indicator
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 24),
+                  decoration: BoxDecoration(
+                    color: AppTheme.getBorderColor(context, opacity: 0.5),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
               Text(
                 'Plan New Holiday',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -87,74 +107,130 @@ class _AddHolidaySheetState extends ConsumerState<AddHolidaySheet> {
                     ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 24),
-              TextFormField(
+              AppSpacing.gapXxl,
+              _buildModernTextField(
                 controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Holiday Name',
-                  prefixIcon: Icon(Icons.beach_access),
-                  border: OutlineInputBorder(),
-                ),
+                label: 'Holiday Name',
+                icon: Icons.beach_access_rounded,
                 validator: (val) =>
-                    val == null || val.isEmpty ? 'Required' : null,
+                    val == null || val.isEmpty ? 'Please enter a name' : null,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               InkWell(
                 onTap: () => _selectDateRange(context),
-                child: InputDecorator(
-                  decoration: const InputDecoration(
-                    labelText: 'Trip Dates',
-                    prefixIcon: Icon(Icons.date_range),
-                    border: OutlineInputBorder(),
+                borderRadius: BorderRadius.circular(AppSpacing.r16),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                  decoration: BoxDecoration(
+                    color: AppTheme.getBorderColor(context, opacity: 0.2),
+                    borderRadius: BorderRadius.circular(AppSpacing.r16),
+                    border: Border.all(
+                      color: Colors.transparent,
+                    ),
                   ),
-                  child: Text(
-                    '${DateFormat('MMM d, y').format(_startDate)} - ${DateFormat('MMM d, y').format(_endDate)}',
+                  child: Row(
+                    children: [
+                      Icon(Icons.date_range_rounded,
+                          color: AppTheme.primaryColor),
+                      AppSpacing.gapLg,
+                      Text(
+                        '${DateFormat('MMM d').format(_startDate)} - ${DateFormat('MMM d, y').format(_endDate)}',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: AppTheme.getTextColor(context)),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
-              TextFormField(
+              const SizedBox(height: 20),
+              _buildModernTextField(
                 controller: _budgetController,
-                decoration: const InputDecoration(
-                  labelText: 'Total Budget',
-                  prefixIcon: Icon(Icons.attach_money),
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.number,
+                label: 'Total Budget Limit',
+                icon: Icons.attach_money_rounded,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 validator: (val) {
-                  if (val == null || val.isEmpty) return 'Required';
-                  if (double.tryParse(val) == null) return 'Invalid amount';
+                  if (val == null || val.isEmpty) return 'Budget is required';
+                  if (double.tryParse(val) == null)
+                    return 'Enter a valid amount';
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
-              TextFormField(
+              const SizedBox(height: 20),
+              _buildModernTextField(
                 controller: _notesController,
-                decoration: const InputDecoration(
-                  labelText: 'Notes (Optional)',
-                  prefixIcon: Icon(Icons.notes),
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 2,
+                label: 'Notes (Optional)',
+                icon: Icons.notes_rounded,
+                maxLines: 3,
               ),
-              const SizedBox(height: 24),
+              AppSpacing.gapXxl,
               ElevatedButton(
                 onPressed: _submit,
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 20),
                   backgroundColor: AppTheme.primaryColor,
                   foregroundColor: Colors.white,
+                  elevation: 8,
+                  shadowColor: AppTheme.primaryColor.withOpacity(0.5),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(AppSpacing.r16),
                   ),
                 ),
                 child: const Text('Create Plan',
                     style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
               ),
-              const SizedBox(height: 16),
+              AppSpacing.gapXl,
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModernTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    TextInputType? keyboardType,
+    int maxLines = 1,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      maxLines: maxLines,
+      validator: validator,
+      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle:
+            TextStyle(color: AppTheme.getTextColor(context, isSecondary: true)),
+        prefixIcon: Icon(icon, color: AppTheme.primaryColor),
+        filled: true,
+        fillColor: AppTheme.getBorderColor(context, opacity: 0.2),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.r16),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.r16),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.r16),
+          borderSide: BorderSide(color: AppTheme.primaryColor, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.r16),
+          borderSide: BorderSide(color: AppTheme.dangerColor, width: 2),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.r16),
+          borderSide: BorderSide(color: AppTheme.dangerColor, width: 2),
         ),
       ),
     );

@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import '../../domain/wage_models.dart';
 import '../providers/wage_provider.dart';
 import '../../../../core/theme/app_theme.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class AddJobSheet extends ConsumerStatefulWidget {
   final WageJob? job;
@@ -97,7 +98,7 @@ class _AddJobSheetState extends ConsumerState<AddJobSheet> {
                     ?.copyWith(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 24),
+              AppSpacing.gapXl,
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(
@@ -108,7 +109,7 @@ class _AddJobSheetState extends ConsumerState<AddJobSheet> {
                 validator: (val) =>
                     val == null || val.isEmpty ? 'Required' : null,
               ),
-              const SizedBox(height: 16),
+              AppSpacing.gapLg,
               TextFormField(
                 controller: _employerController,
                 decoration: const InputDecoration(
@@ -117,7 +118,7 @@ class _AddJobSheetState extends ConsumerState<AddJobSheet> {
                   border: OutlineInputBorder(),
                 ),
               ),
-              const SizedBox(height: 16),
+              AppSpacing.gapLg,
               SegmentedButton<WageMode>(
                 segments: const [
                   ButtonSegment(
@@ -132,7 +133,7 @@ class _AddJobSheetState extends ConsumerState<AddJobSheet> {
                 selected: {_mode},
                 onSelectionChanged: (val) => setState(() => _mode = val.first),
               ),
-              const SizedBox(height: 16),
+              AppSpacing.gapLg,
               TextFormField(
                 controller: _baseAmountController,
                 decoration: InputDecoration(
@@ -147,7 +148,7 @@ class _AddJobSheetState extends ConsumerState<AddJobSheet> {
                 validator: (val) =>
                     val == null || val.isEmpty ? 'Required' : null,
               ),
-              const SizedBox(height: 16),
+              AppSpacing.gapLg,
               TextFormField(
                 controller: _otRateController,
                 decoration: const InputDecoration(
@@ -158,7 +159,7 @@ class _AddJobSheetState extends ConsumerState<AddJobSheet> {
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
               ),
-              const SizedBox(height: 16),
+              AppSpacing.gapLg,
               TextFormField(
                 controller: _taxController,
                 decoration: const InputDecoration(
@@ -169,7 +170,7 @@ class _AddJobSheetState extends ConsumerState<AddJobSheet> {
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
               ),
-              const SizedBox(height: 24),
+              AppSpacing.gapXl,
               Row(
                 children: [
                   if (widget.job != null)
@@ -191,10 +192,10 @@ class _AddJobSheetState extends ConsumerState<AddJobSheet> {
                       onPressed: _submit,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        backgroundColor: AppTheme.wagesColor,
+                        backgroundColor: AppTheme.primaryColor,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
+                            borderRadius: BorderRadius.circular(AppSpacing.r12)),
                       ),
                       child: Text(
                           widget.job == null ? 'Create Job' : 'Save Changes',
@@ -204,7 +205,7 @@ class _AddJobSheetState extends ConsumerState<AddJobSheet> {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              AppSpacing.gapXl,
             ],
           ),
         ),

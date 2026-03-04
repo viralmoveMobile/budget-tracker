@@ -14,6 +14,11 @@ import '../../../accounts/presentation/providers/account_provider.dart';
 import '../../../accounts/data/models/account.dart';
 import '../../../sharing/presentation/providers/expense_sync_provider.dart';
 import '../../../sharing/presentation/providers/firestore_sharing_provider.dart';
+import '../../../my_account/presentation/providers/profile_provider.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../widgets/ui/app_app_bar.dart';
+import '../../../../widgets/ui/app_scaffold.dart';
+import 'package:budget_tracking_app/core/utils/currency_formatter.dart';
 
 final expenseViewModeProvider =
     StateProvider<bool>((ref) => false); // false = List, true = Calendar
@@ -21,17 +26,28 @@ final expenseViewModeProvider =
 final selectedPoolProvider =
     StateProvider<String?>((ref) => null); // null = All Accounts
 
+
 class ExpenseListPage extends ConsumerWidget {
   const ExpenseListPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final expensesAsync = ref.watch(expensesProvider);
+    final profile = ref.watch(profileProvider);
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F7),
-      appBar: AppBar(
-        backgroundColor: AppTheme.expensesColor,
+    final double totalExpense = expensesAsync.value
+            ?.where((e) => !e.isIncome)
+            .fold<double>(0.0, (sum, expense) => sum + expense.amount) ??
+        0.0;
+
+    final double totalIncome = expensesAsync.value
+            ?.where((e) => e.isIncome)
+            .fold<double>(0.0, (sum, income) => sum + income.amount) ??
+        0.0;
+    return AppScaffold(
+      withTealHeader: true,
+      backgroundColor: AppTheme.backgroundLight,
+      appBar: AppAppBar(
         title: Text('Everyday Expenses',
             style: TextStyle(
                 color: AppTheme.getSurfaceColor(context),
@@ -75,6 +91,79 @@ class ExpenseListPage extends ConsumerWidget {
           ),
         ],
       ),
+      heroContent: Padding(
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
+        child: Column(
+          children: [
+            // Income / Expense Row
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.call_made_rounded,
+                              size: 14, color: Colors.white.withOpacity(0.9)),
+                          AppSpacing.gapXs,
+                          Text('Total Income',
+                              style: TextStyle(
+                                  color: Colors.white.withOpacity(0.9),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500)),
+                        ],
+                      ),
+                      AppSpacing.gapXs,
+                      Text(
+                        CurrencyFormatter.format(totalIncome, profile.currency),
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: -0.5),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                    width: 1, height: 40, color: Colors.white.withOpacity(0.3)),
+                AppSpacing.gapLg,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.call_received_rounded,
+                              size: 14, color: Colors.white.withOpacity(0.9)),
+                          AppSpacing.gapXs,
+                          Text('Total Expenses',
+                              style: TextStyle(
+                                  color: Colors.white.withOpacity(0.9),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500)),
+                        ],
+                      ),
+                      AppSpacing.gapXs,
+                      Text(
+                        CurrencyFormatter.format(totalExpense, profile.currency),
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: -0.5),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            AppSpacing.gapLg,
+          ],
+        ),
+      ),
       body: ref.watch(expenseViewModeProvider)
           ? expensesAsync.when(
               data: (expenses) => ExpenseCalendarView(expenses: expenses),
@@ -106,8 +195,8 @@ class ExpenseListPage extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(24, 16, 24, 8),
+                                padding: const EdgeInsets.fromLTRB(
+                                    AppSpacing.xl, AppSpacing.lg, AppSpacing.xl, AppSpacing.sm),
                                 child: Row(
                                   children: [
                                     const Icon(
@@ -115,7 +204,7 @@ class ExpenseListPage extends ConsumerWidget {
                                       color: AppTheme.primaryColor,
                                       size: 20,
                                     ),
-                                    const SizedBox(width: 8),
+                                    AppSpacing.gapSm,
                                     const Text(
                                       'Shared Expenses',
                                       style: TextStyle(
@@ -127,13 +216,13 @@ class ExpenseListPage extends ConsumerWidget {
                                     const Spacer(),
                                     Container(
                                       padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
+                                        horizontal: AppSpacing.sm,
+                                        vertical: AppSpacing.xs,
                                       ),
                                       decoration: BoxDecoration(
                                         color: AppTheme.primaryColor
                                             .withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(12),
+                                        borderRadius: BorderRadius.circular(AppSpacing.r12),
                                       ),
                                       child: Text(
                                         '${sharedExpenses.length}',
@@ -147,10 +236,10 @@ class ExpenseListPage extends ConsumerWidget {
                                   ],
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              AppSpacing.gapXs,
                               Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: AppSpacing.lg),
                                 child: Column(
                                   children: sharedExpenses.map((expense) {
                                     // Find the owner's info for this expense
@@ -189,7 +278,7 @@ class ExpenseListPage extends ConsumerWidget {
                                 ),
                               ),
                               const Padding(
-                                padding: EdgeInsets.all(16),
+                                padding: AppSpacing.cardPadding,
                                 child: Divider(height: 1),
                               ),
                             ],
@@ -202,16 +291,17 @@ class ExpenseListPage extends ConsumerWidget {
                   ),
                 ),
                 SliverPadding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.xl, vertical: AppSpacing.lg),
                   sliver: SliverToBoxAdapter(
                     child: Row(
                       children: [
                         Text(
                           'My Expenses',
                           style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.5,
                               color: AppTheme.getTextColor(context)),
                         ),
                         const Spacer(),
@@ -236,9 +326,9 @@ class ExpenseListPage extends ConsumerWidget {
                             children: [
                               Icon(Icons.receipt_long_rounded,
                                   size: 80,
-                                  color: AppTheme.getTextColor(context,
-                                      opacity: 0.15)),
-                              SizedBox(height: 20),
+                                  color:
+                                      AppTheme.primaryColor.withOpacity(0.5)),
+                              AppSpacing.gapLg,
                               Text(
                                 'No expenses tracked yet',
                                 style: TextStyle(
@@ -252,7 +342,8 @@ class ExpenseListPage extends ConsumerWidget {
                       );
                     }
                     return SliverPadding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.lg),
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
@@ -311,7 +402,7 @@ class _AccountSelector extends ConsumerWidget {
           margin: const EdgeInsets.symmetric(vertical: 8),
           child: ListView(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
             children: [
               _AccountChip(
                 label: 'All Accounts',
@@ -364,16 +455,19 @@ class _AccountChip extends StatelessWidget {
         label: Text(label),
         selected: isSelected,
         onSelected: (_) => onTap(),
-        selectedColor: color,
+        selectedColor: AppTheme.primaryColor,
         labelStyle: TextStyle(
-          color: isSelected ? Colors.white : Colors.black87,
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          color: isSelected ? Colors.white : AppTheme.textPrimary,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
         ),
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppSpacing.r24),
           side: BorderSide(
-            color: isSelected ? color : AppTheme.getBorderColor(context),
+            color: isSelected
+                ? AppTheme.primaryColor
+                : Colors.grey.withOpacity(0.2),
+            width: 1,
           ),
         ),
       ),
@@ -414,138 +508,199 @@ class ExpenseCard extends ConsumerWidget {
       error: (_, __) => 'Error',
     );
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color:
-            isShared ? AppTheme.primaryColor.withOpacity(0.05) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: isShared
-            ? Border.all(
-                color: AppTheme.primaryColor.withOpacity(0.3), width: 1.5)
-            : null,
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.getDividerColor(context),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          ListTile(
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            leading: Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: expense.category.color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+    return GestureDetector(
+      onTap: onTap ??
+          (isShared
+              ? null
+              : () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (context) => AddExpenseSheet(expense: expense),
+                  );
+                }),
+      onLongPress: onLongPress ??
+          (isShared
+              ? null
+              : () {
+                  _showDeleteDialog(context, ref);
+                }),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: AppTheme.spaceMd),
+        padding: const EdgeInsets.all(AppTheme.spaceMd),
+        decoration: BoxDecoration(
+          color: isShared
+              ? AppTheme.primaryColor.withOpacity(0.05)
+              : Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            if (!isShared)
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
-              child: Icon(expense.category.icon, color: expense.category.color),
-            ),
-            title: Text(
-              expense.category.label,
-              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
-            ),
-            subtitle: Padding(
-              padding: const EdgeInsets.only(top: 4.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    DateFormat('MMM dd').format(expense.date) +
-                        (expense.notes?.isNotEmpty == true
-                            ? ' • ${expense.notes}'
-                            : ''),
-                    style: TextStyle(
-                        color: AppTheme.getTextColor(context, opacity: 0.5),
-                        fontSize: 12),
-                  ),
-                  const SizedBox(height: 2),
-                  Row(
+          ],
+          border: isShared
+              ? Border.all(
+                  color: AppTheme.primaryColor.withOpacity(0.3), width: 1)
+              : null,
+        ),
+        child: Stack(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Row(
                     children: [
-                      Icon(Icons.account_balance_wallet_outlined,
-                          size: 10, color: AppTheme.accountsColor),
-                      const SizedBox(width: 4),
-                      Text(
-                        accountName,
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: expense.isIncome
+                              ? AppTheme.successColor.withOpacity(0.1)
+                              : AppTheme.dangerColor.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          expense.isIncome
+                              ? Icons.arrow_downward_rounded
+                              : Icons.arrow_upward_rounded,
+                          color: expense.isIncome
+                              ? AppTheme.successColor
+                              : AppTheme.dangerColor,
+                          size: 24,
+                        ),
+                      ),
+                      AppSpacing.gapLg,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              expense.notes?.isNotEmpty == true
+                                  ? expense.notes!
+                                  : expense.category.label,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: AppTheme.textPrimary,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: AppTheme.spaceXs),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    DateFormat('HH:mm - MMM dd')
+                                        .format(expense.date),
+                                    style: AppTheme.smallStyle,
+                                    maxLines: 1,
+                                  ),
+                                ),
+                                const SizedBox(width: AppSpacing.md),
+                                Icon(Icons.account_balance_wallet_outlined,
+                                    size: 10, color: AppTheme.accountsColor),
+                                const SizedBox(width: AppTheme.spaceXs),
+                                Flexible(
+                                  child: Text(
+                                    accountName,
+                                    style: AppTheme.smallStyle.copyWith(
+                                      color: AppTheme.accountsColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 10,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                AppSpacing.gapLg,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      (expense.isIncome ? '+' : '-') +
+                          CurrencyFormatter.format(expense.amount, expense.currency),
+                      style: AppTheme.bodyStyle.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: expense.isIncome
+                            ? AppTheme.successColor
+                            : AppTheme.textPrimary,
+                      ),
+                    ),
+                    AppSpacing.gapXs,
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        expense.category.label,
                         style: const TextStyle(
-                          color: AppTheme.accountsColor,
-                          fontSize: 10,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            if (isShared)
+              Positioned(
+                top: -8,
+                right: -8,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryColor,
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(12),
+                      topRight: Radius.circular(16),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.person_rounded,
+                        color: AppTheme.getSurfaceColor(context),
+                        size: 10,
+                      ),
+                      AppSpacing.gapXs,
+                      Text(
+                        sharedByEmail?.isNotEmpty == true
+                            ? sharedByEmail!.split('@').first
+                            : 'Shared',
+                        style: TextStyle(
+                          color: AppTheme.getSurfaceColor(context),
+                          fontSize: 9,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            trailing: Text(
-              '${expense.isIncome ? '+' : '-'}${NumberFormat.simpleCurrency(name: expense.currency, decimalDigits: 0).format(expense.amount)}',
-              style: TextStyle(
-                fontWeight: FontWeight.w900,
-                fontSize: 18,
-                color: expense.isIncome ? Colors.green : Colors.black87,
-              ),
-            ),
-            onTap: onTap ??
-                (isShared
-                    ? null
-                    : () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          builder: (context) =>
-                              AddExpenseSheet(expense: expense),
-                        );
-                      }),
-            onLongPress: onLongPress ??
-                (isShared
-                    ? null
-                    : () {
-                        _showDeleteDialog(context, ref);
-                      }),
-          ),
-          if (isShared)
-            Positioned(
-              top: 8,
-              right: 8,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: AppTheme.primaryColor,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.person_rounded,
-                      color: AppTheme.getSurfaceColor(context),
-                      size: 12,
-                    ),
-                    SizedBox(width: 4),
-                    Text(
-                      sharedByEmail?.isNotEmpty == true
-                          ? sharedByEmail!.split('@').first
-                          : 'Shared',
-                      style: TextStyle(
-                        color: AppTheme.getSurfaceColor(context),
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     ).animate().fadeIn(duration: 400.ms).slideX(begin: 0.05, end: 0);
   }
@@ -555,7 +710,7 @@ class ExpenseCard extends ConsumerWidget {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSpacing.r24)),
         title: const Text('Delete Expense?'),
         content: const Text('This action cannot be undone.'),
         actions: [

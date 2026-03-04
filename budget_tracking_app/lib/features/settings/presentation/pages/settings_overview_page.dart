@@ -1,3 +1,5 @@
+import '../../../../widgets/ui/app_app_bar.dart';
+import '../../../../widgets/ui/app_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -6,15 +8,16 @@ import '../../../../core/theme/app_theme.dart';
 import 'help_support_page.dart';
 import 'privacy_policy_page.dart';
 import '../../../../features/data_management/presentation/pages/data_management_page.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class SettingsOverviewPage extends ConsumerWidget {
   const SettingsOverviewPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
+    return AppScaffold(
       backgroundColor: const Color(0xFFF5F5F7),
-      appBar: AppBar(
+      appBar: AppAppBar(
         title: Text('Settings',
             style: TextStyle(
                 color: AppTheme.getSurfaceColor(context),
@@ -27,9 +30,9 @@ class SettingsOverviewPage extends ConsumerWidget {
         padding: const EdgeInsets.all(24),
         children: [
           _buildProfileHeader(context),
-          const SizedBox(height: 32),
+          AppSpacing.gapXxl,
           _buildSectionTitle(context, 'SUPPORT & SECURITY'),
-          const SizedBox(height: 12),
+          AppSpacing.gapMd,
           _buildSettingsCard(context, [
             _buildSettingsItem(
               context,
@@ -55,9 +58,9 @@ class SettingsOverviewPage extends ConsumerWidget {
                       builder: (context) => const PrivacyPolicyPage())),
             ),
           ]),
-          const SizedBox(height: 32),
+          AppSpacing.gapXxl,
           _buildSectionTitle(context, 'DATA MANAGEMENT'),
-          const SizedBox(height: 12),
+          AppSpacing.gapMd,
           _buildSettingsCard(context, [
             _buildSettingsItem(
               context,
@@ -71,9 +74,9 @@ class SettingsOverviewPage extends ConsumerWidget {
                       builder: (context) => const DataManagementPage())),
             ),
           ]),
-          const SizedBox(height: 32),
+          AppSpacing.gapXxl,
           _buildSectionTitle(context, 'MASTER COMMUNITY'),
-          const SizedBox(height: 12),
+          AppSpacing.gapMd,
           _buildSettingsCard(context, [
             _buildSettingsItem(
               context,
@@ -114,7 +117,7 @@ class SettingsOverviewPage extends ConsumerWidget {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppTheme.getSurfaceColor(context),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(AppSpacing.r24),
         boxShadow: [
           BoxShadow(
               color: AppTheme.getDividerColor(context),
@@ -169,7 +172,7 @@ class SettingsOverviewPage extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         color: AppTheme.getSurfaceColor(context),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(AppSpacing.r24),
         boxShadow: [
           BoxShadow(
               color: AppTheme.getDividerColor(context),
@@ -190,12 +193,12 @@ class SettingsOverviewPage extends ConsumerWidget {
     required VoidCallback onTap,
   }) {
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      contentPadding: AppSpacing.listItemPadding,
       leading: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
             color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12)),
+            borderRadius: BorderRadius.circular(AppSpacing.r12)),
         child: Icon(icon, color: color, size: 24),
       ),
       title: Text(title,

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'app_spacing.dart';
+import 'app_text.dart';
 
 enum FeatureType {
   expenses,
@@ -17,9 +19,9 @@ class AppTheme {
   // ==================== PROFESSIONAL COLOR PALETTE ====================
 
   // Primary Brand Colors
-  static const Color primaryColor = Color(0xFF5E5CE6); // Deep Indigo
-  static const Color primaryLight = Color(0xFF8B89F7); // Light Indigo
-  static const Color primaryDark = Color(0xFF4845B4); // Dark Indigo
+  static const Color primaryColor = Color(0xFF0DCDA3); // Vibrant Teal
+  static const Color primaryLight = Color(0xFF4EE2C0); // Light Teal
+  static const Color primaryDark = Color(0xFF0A9B7A); // Dark Teal
 
   // Semantic Colors (iOS-inspired)
   static const Color successColor = Color(0xFF34C759); // Green
@@ -28,7 +30,7 @@ class AppTheme {
   static const Color infoColor = Color(0xFF007AFF); // Blue
 
   // Neutral Palette (Light Theme)
-  static const Color backgroundLight = Color(0xFFF5F5F7); // Off-white
+  static const Color backgroundLight = Color(0xFFF3FAF5); // Mint Off-white
   static const Color surfaceLight = Color(0xFFFFFFFF); // Pure white
   static const Color borderLight = Color(0xFFE5E5EA); // Light gray border
   static const Color textPrimary = Color(0xFF1C1C1E); // Near black
@@ -107,19 +109,19 @@ class AppTheme {
 
   // ==================== SPACING SYSTEM ====================
 
-  static const double spaceXs = 4.0;
-  static const double spaceSm = 8.0;
-  static const double spaceMd = 16.0;
-  static const double spaceLg = 24.0;
-  static const double spaceXl = 32.0;
-  static const double space2xl = 48.0;
+  static const double spaceXs = AppSpacing.xs;
+  static const double spaceSm = AppSpacing.sm;
+  static const double spaceMd = AppSpacing.md;
+  static const double spaceLg = AppSpacing.lg;
+  static const double spaceXl = AppSpacing.xl;
+  static const double space2xl = AppSpacing.xxl;
 
   // ==================== BORDER RADIUS ====================
 
   static const double radiusSm = 8.0;
-  static const double radiusMd = 12.0;
-  static const double radiusLg = 16.0;
-  static const double radiusXl = 24.0;
+  static const double radiusMd = AppSpacing.r12;
+  static const double radiusLg = AppSpacing.r16;
+  static const double radiusXl = AppSpacing.r24;
   static const double radiusFull = 999.0;
 
   // ==================== METHODS ====================
@@ -171,15 +173,7 @@ class AppTheme {
           ),
         ),
       ),
-      textTheme: TextTheme(
-        displayLarge: displayStyle,
-        headlineLarge: h1Style,
-        headlineMedium: h2Style,
-        headlineSmall: h3Style,
-        bodyLarge: bodyStyle,
-        bodyMedium: captionStyle,
-        bodySmall: smallStyle,
-      ),
+      textTheme: AppText.getTextTheme(isDark: false),
     );
   }
 
@@ -208,6 +202,7 @@ class AppTheme {
         elevation: 0,
         centerTitle: false,
       ),
+      textTheme: AppText.getTextTheme(isDark: true),
     );
   }
 

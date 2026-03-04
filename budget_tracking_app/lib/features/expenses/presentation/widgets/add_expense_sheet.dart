@@ -9,6 +9,7 @@ import '../../../common/services/location_service.dart';
 import '../../../../features/exchange/presentation/providers/exchange_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class AddExpenseSheet extends ConsumerStatefulWidget {
   final Expense? expense;
@@ -164,7 +165,7 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
                       ?.copyWith(fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 24),
+                AppSpacing.gapXl,
                 SegmentedButton<bool>(
                   segments: const [
                     ButtonSegment(
@@ -183,12 +184,12 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
                     setState(() => _isIncome = value.first);
                   },
                 ),
-                const SizedBox(height: 16),
+                AppSpacing.gapLg,
                 const Text(
                   'Source Account',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
-                const SizedBox(height: 8),
+                AppSpacing.gapSm,
                 ref.watch(accountsProvider).when(
                       data: (accounts) => Row(
                         children: [
@@ -218,7 +219,7 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
                               },
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          AppSpacing.gapSm,
                           IconButton.filledTonal(
                             onPressed: () {
                               showModalBottomSheet(
@@ -239,7 +240,7 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
                         style: const TextStyle(color: Colors.red, fontSize: 12),
                       ),
                     ),
-                const SizedBox(height: 16),
+                AppSpacing.gapLg,
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -262,7 +263,7 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
                         },
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    AppSpacing.gapMd,
                     Expanded(
                       child: DropdownButtonFormField<String>(
                         value: _selectedCurrency,
@@ -310,7 +311,7 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
                       ),
                     ),
                   ),
-                const SizedBox(height: 16),
+                AppSpacing.gapLg,
                 DropdownButtonFormField<ExpenseCategory>(
                   value: _selectedCategory,
                   decoration: const InputDecoration(
@@ -323,7 +324,7 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
                       child: Row(
                         children: [
                           Icon(category.icon, color: category.color),
-                          const SizedBox(width: 8),
+                          AppSpacing.gapSm,
                           Text(category.label),
                         ],
                       ),
@@ -334,7 +335,7 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
                       setState(() => _selectedCategory = value);
                   },
                 ),
-                const SizedBox(height: 16),
+                AppSpacing.gapLg,
                 InkWell(
                   onTap: () => _selectDate(context),
                   child: InputDecorator(
@@ -346,7 +347,7 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
                     child: Text(DateFormat('yyyy-MM-dd').format(_selectedDate)),
                   ),
                 ),
-                const SizedBox(height: 16),
+                AppSpacing.gapLg,
                 TextFormField(
                   controller: _notesController,
                   decoration: const InputDecoration(
@@ -356,7 +357,7 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
                   ),
                   maxLines: 2,
                 ),
-                const SizedBox(height: 24),
+                AppSpacing.gapXl,
                 ElevatedButton(
                   onPressed: _submit,
                   style: ElevatedButton.styleFrom(
@@ -365,7 +366,7 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
                   child: Text(
                       widget.expense == null ? 'Add Expense' : 'Save Changes'),
                 ),
-                const SizedBox(height: 16),
+                AppSpacing.gapLg,
               ],
             ),
           ),

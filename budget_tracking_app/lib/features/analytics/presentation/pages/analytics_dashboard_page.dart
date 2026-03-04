@@ -1,3 +1,8 @@
+import '../../../../widgets/ui/app_app_bar.dart';
+import '../../../../widgets/ui/app_scaffold.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
+import 'package:budget_tracking_app/core/utils/currency_formatter.dart';
+import '../../../my_account/presentation/providers/profile_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -5,7 +10,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../providers/analytics_providers.dart';
 import '../providers/projection_provider.dart';
-import '../../domain/models/analytics_data.dart';
+import '../../domain/models/analytics_data.dart'; 
 import '../widgets/add_goal_sheet.dart';
 import '../widgets/goal_tracking_card.dart';
 
@@ -16,10 +21,11 @@ class AnalyticsDashboardPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final analyticsAsync = ref.watch(analyticsDashboardProvider);
     final projectionAsync = ref.watch(projectionProvider);
+    final profile = ref.watch(profileProvider);
 
-    return Scaffold(
+    return AppScaffold(
       backgroundColor: Color(0xFFF5F5F7),
-      appBar: AppBar(
+      appBar: AppAppBar(
         title: Text(
           'Analytics & Insights',
           style: TextStyle(
@@ -51,10 +57,11 @@ class AnalyticsDashboardPage extends ConsumerWidget {
                 children: [
                   _buildSectionTitle(context, 'Performance Overview'),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
                     decoration: BoxDecoration(
                       color: AppTheme.getSurfaceColor(context),
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(AppSpacing.r24),
                       border:
                           Border.all(color: AppTheme.getBorderColor(context)),
                     ),
@@ -62,20 +69,23 @@ class AnalyticsDashboardPage extends ConsumerWidget {
                       child: DropdownButton<String>(
                         value: ref.watch(timeRangeProvider),
                         isDense: true,
-                        icon: Icon(Icons.filter_list_rounded,
-                            size: 16,
+                        icon: Icon(Icons.keyboard_arrow_down_rounded,
+                            size: 18,
                             color:
                                 AppTheme.getTextColor(context, opacity: 0.6)),
                         items:
                             ['Weekly', 'Monthly', 'Yearly'].map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
-                            child: Text(
-                              value,
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppTheme.getTextColor(context)),
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: AppSpacing.sm),
+                              child: Text(
+                                value,
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppTheme.getTextColor(context)),
+                              ),
                             ),
                           );
                         }).toList(),
@@ -89,41 +99,42 @@ class AnalyticsDashboardPage extends ConsumerWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              AppSpacing.gapLg,
 
-              _buildMetricSummary(context, data),
-              const SizedBox(height: 32),
+              _buildMetricSummary(context, data, profile.currency),
+              AppSpacing.gapXxl,
 
               _buildSectionTitle(context, 'Smart Insights'),
-              const SizedBox(height: 16),
-              _buildSmartInsights(context, data),
-              const SizedBox(height: 32),
+              AppSpacing.gapLg,
+              _buildSmartInsights(context, data, profile.currency),
+              AppSpacing.gapXxl,
 
               _buildSectionTitle(context, 'Trends & Forecasting'),
-              const SizedBox(height: 16),
-              _buildTrendChart(context, data),
-              const SizedBox(height: 32),
+              AppSpacing.gapLg,
+              _buildTrendChart(context, data, profile.currency),
+              AppSpacing.gapXxl,
 
               _buildSectionTitle(context, 'Budget Performance'),
-              const SizedBox(height: 16),
-              _buildBudgetPerformance(context, data),
-              const SizedBox(height: 32),
+              AppSpacing.gapLg,
+              _buildBudgetPerformance(context, data, profile.currency),
+              AppSpacing.gapXxl,
 
               projectionAsync.when(
-                data: (proj) => _buildProjectionCard(context, proj),
+                data: (proj) => _buildProjectionCard(context, proj, profile.currency),
                 loading: () => const Center(child: LinearProgressIndicator()),
                 error: (_, __) => const SizedBox.shrink(),
               ),
-              const SizedBox(height: 32),
+              AppSpacing.gapXxl,
 
               _buildSectionTitle(context, 'Spending Distribution'),
-              const SizedBox(height: 16),
+              AppSpacing.gapLg,
               _buildSpendingPieChart(context, data),
-              const SizedBox(height: 32),
+              AppSpacing.gapXxl,
 
               _buildSectionTitle(context, 'Monthly Financial summary'),
-              const SizedBox(height: 16),
-              _buildMonthlyBreakdown(context, data),
+              AppSpacing.gapLg,
+              _buildMonthlyBreakdown(context, data, profile.currency),
+              AppSpacing.gapXxl,
               const SizedBox(height: 32),
 
               _buildSectionTitle(context, 'Financial Goals'),
@@ -163,57 +174,70 @@ class AnalyticsDashboardPage extends ConsumerWidget {
   }
 
   Widget _buildSmartInsights(
-      BuildContext context, AnalyticsDashboardData data) {
+      BuildContext context, AnalyticsDashboardData data, String currency) {
     if (data.insights.isEmpty) return const SizedBox.shrink();
 
     return SizedBox(
-      height: 140,
+      height: 160,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
+        clipBehavior: Clip.none,
         itemCount: data.insights.length,
         itemBuilder: (context, index) {
           final insight = data.insights[index];
           return Container(
-            width: 280,
-            margin: EdgeInsets.only(right: 16),
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppTheme.getSurfaceColor(context),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: insight.color.withOpacity(0.1)),
-              boxShadow: [
+            width: 300,
+            margin: const EdgeInsets.only(right: AppSpacing.lg),
+            padding: AppSpacing.cardPadding,
+            decoration: AppTheme.cardDecoration(
+               borderColor: insight.color.withOpacity(0.1),
+            ).copyWith(
+               color: AppTheme.getSurfaceColor(context),
+               boxShadow: [
                 BoxShadow(
                   color: insight.color.withOpacity(0.05),
-                  blurRadius: 10,
+                  blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
               ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Row(
                   children: [
-                    Icon(insight.icon, color: insight.color, size: 20),
-                    const SizedBox(width: 8),
-                    Text(
-                      insight.title,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: insight.color,
-                        fontSize: 14,
+                    Container(
+                      padding: const EdgeInsets.all(AppSpacing.sm),
+                      decoration: BoxDecoration(
+                        color: insight.color.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(AppSpacing.r12),
+                      ),
+                      child: Icon(insight.icon, color: insight.color, size: 20),
+                    ),
+                    AppSpacing.gapMd,
+                    Expanded(
+                      child: Text(
+                        insight.title,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: insight.color,
+                          fontSize: 15,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 12),
+                AppSpacing.gapMd,
                 Expanded(
                   child: Text(
                     insight.message,
                     style: TextStyle(
-                      color: AppTheme.getTextColor(context),
+                      color: AppTheme.getTextColor(context, opacity: 0.8),
                       fontSize: 13,
-                      height: 1.4,
+                      height: 1.5,
                     ),
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
@@ -228,7 +252,7 @@ class AnalyticsDashboardPage extends ConsumerWidget {
   }
 
   Widget _buildBudgetPerformance(
-      BuildContext context, AnalyticsDashboardData data) {
+      BuildContext context, AnalyticsDashboardData data, String currency) {
     if (data.performance.isEmpty) {
       return Container(
         padding: EdgeInsets.all(24),
@@ -270,7 +294,7 @@ class AnalyticsDashboardPage extends ConsumerWidget {
                       ],
                     ),
                     Text(
-                      '\$${p.spent.toStringAsFixed(0)} / \$${p.budget.toStringAsFixed(0)}',
+                      '${CurrencyFormatter.format(p.spent, currency)} / ${CurrencyFormatter.format(p.budget, currency)}',
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -318,7 +342,7 @@ class AnalyticsDashboardPage extends ConsumerWidget {
   }
 
   Widget _buildMetricSummary(
-      BuildContext context, AnalyticsDashboardData data) {
+      BuildContext context, AnalyticsDashboardData data, String currency) {
     return Row(
       children: [
         Expanded(
@@ -327,16 +351,18 @@ class AnalyticsDashboardPage extends ConsumerWidget {
             amount: data.totalIncome /
                 (data.monthlyTrends.isEmpty ? 1 : data.monthlyTrends.length),
             color: AppTheme.successColor,
+            currency: currency,
             icon: Icons.arrow_downward_rounded,
           ),
         ),
-        const SizedBox(width: 16),
+        AppSpacing.gapLg,
         Expanded(
           child: _MetricCard(
             title: 'Avg Expense',
             amount: data.totalExpense /
                 (data.monthlyTrends.isEmpty ? 1 : data.monthlyTrends.length),
             color: AppTheme.dangerColor,
+            currency: currency,
             icon: Icons.arrow_upward_rounded,
           ),
         ),
@@ -347,7 +373,8 @@ class AnalyticsDashboardPage extends ConsumerWidget {
         .slideY(begin: 0.2, end: 0, curve: Curves.easeOutCubic);
   }
 
-  Widget _buildTrendChart(BuildContext context, AnalyticsDashboardData data) {
+  Widget _buildTrendChart(
+      BuildContext context, AnalyticsDashboardData data, String currency) {
     if (data.monthlyTrends.isEmpty) {
       return Container(
         height: 200,
@@ -369,7 +396,7 @@ class AnalyticsDashboardPage extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _buildLegendItem(context, 'Income', AppTheme.successColor),
-              const SizedBox(width: 24),
+              AppSpacing.gapXl,
               _buildLegendItem(context, 'Expense', AppTheme.dangerColor),
             ],
           ),
@@ -466,7 +493,7 @@ class AnalyticsDashboardPage extends ConsumerWidget {
                     tooltipRoundedRadius: 8,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       return BarTooltipItem(
-                        '\$${rod.toY.toStringAsFixed(0)}',
+                        CurrencyFormatter.format(rod.toY, currency),
                         TextStyle(
                           color: AppTheme.getSurfaceColor(context),
                           fontWeight: FontWeight.bold,
@@ -548,7 +575,7 @@ class AnalyticsDashboardPage extends ConsumerWidget {
               ),
             ),
           ),
-          const SizedBox(width: 24),
+          AppSpacing.gapXl,
           Expanded(
             flex: 2,
             child: Column(
@@ -588,7 +615,7 @@ class AnalyticsDashboardPage extends ConsumerWidget {
   }
 
   Widget _buildMonthlyBreakdown(
-      BuildContext context, AnalyticsDashboardData data) {
+      BuildContext context, AnalyticsDashboardData data, String currency) {
     return Column(
       children: data.monthlyTrends.reversed.map((trend) {
         final double balance = trend.income - trend.expense;
@@ -620,7 +647,7 @@ class AnalyticsDashboardPage extends ConsumerWidget {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      'Income: \$${trend.income.toStringAsFixed(0)} • Expense: \$${trend.expense.toStringAsFixed(0)}',
+                      'Income: ${CurrencyFormatter.format(trend.income, currency)} • Expense: ${CurrencyFormatter.format(trend.expense, currency)}',
                       style: TextStyle(
                           color: AppTheme.getTextColor(context, opacity: 0.5),
                           fontSize: 12),
@@ -632,7 +659,7 @@ class AnalyticsDashboardPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '${balance >= 0 ? "+" : ""}\$${balance.abs().toStringAsFixed(0)}',
+                    '${balance >= 0 ? "+" : "-"}${CurrencyFormatter.format(balance.abs(), currency)}',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -660,7 +687,8 @@ class AnalyticsDashboardPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildProjectionCard(BuildContext context, ProjectionData proj) {
+  Widget _buildProjectionCard(
+      BuildContext context, ProjectionData proj, String currency) {
     return Container(
       padding: EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -705,11 +733,13 @@ class AnalyticsDashboardPage extends ConsumerWidget {
           _ProjectionRow(
               label: 'Est. Spending',
               amount: proj.estimatedNextMonthExpense,
+              currency: currency,
               color: AppTheme.dangerColor),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           _ProjectionRow(
               label: 'Est. Savings',
               amount: proj.estimatedNextMonthSavings,
+              currency: currency,
               color: AppTheme.successColor),
           if (proj.estimatedNextMonthSavings > 0) ...[
             Padding(
@@ -779,63 +809,55 @@ class _MetricCard extends StatelessWidget {
   final String title;
   final double amount;
   final Color color;
+  final String currency;
   final IconData icon;
 
   const _MetricCard(
       {required this.title,
       required this.amount,
       required this.color,
+      required this.currency,
       required this.icon});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppTheme.getSurfaceColor(context),
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.getDividerColor(context),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xl),
+      decoration: AppTheme.cardDecoration(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(icon, size: 20, color: color),
-              ),
-              SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                      color: AppTheme.getTextColor(context, opacity: 0.6),
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.sm),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(AppSpacing.r12),
+            ),
+            child: Icon(icon, size: 20, color: color),
           ),
-          SizedBox(height: 16),
+          AppSpacing.gapMd,
           Text(
-            '\$${amount.toStringAsFixed(0)}',
+            title,
             style: TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.w900,
-              letterSpacing: -1,
-              color: AppTheme.getTextColor(context),
+              color: AppTheme.getTextColor(context, opacity: 0.6),
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          AppSpacing.gapXs,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              CurrencyFormatter.format(amount, currency),
+              style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.w900,
+                letterSpacing: -0.5,
+                color: AppTheme.getTextColor(context),
+              ),
             ),
           ),
         ],
@@ -847,10 +869,14 @@ class _MetricCard extends StatelessWidget {
 class _ProjectionRow extends StatelessWidget {
   final String label;
   final double amount;
+  final String currency;
   final Color color;
 
   const _ProjectionRow(
-      {required this.label, required this.amount, required this.color});
+      {required this.label,
+      required this.amount,
+      required this.currency,
+      required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -864,7 +890,7 @@ class _ProjectionRow extends StatelessWidget {
                     fontSize: 14,
                     fontWeight: FontWeight.w500))),
         Text(
-          '\$${amount.toStringAsFixed(0)}',
+          CurrencyFormatter.format(amount, currency),
           style: TextStyle(
               fontSize: 18, fontWeight: FontWeight.bold, color: color),
         ),

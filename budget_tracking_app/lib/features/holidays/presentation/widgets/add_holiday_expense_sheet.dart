@@ -7,6 +7,8 @@ import '../providers/holiday_provider.dart';
 import '../../domain/models/holiday_expense.dart';
 import '../../../common/services/location_service.dart';
 import '../../../../features/exchange/presentation/providers/exchange_provider.dart';
+import '../../../../core/theme/app_theme.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class AddHolidayExpenseSheet extends ConsumerStatefulWidget {
   final String holidayId;
@@ -143,12 +145,23 @@ class _AddHolidayExpenseSheetState
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.getSurfaceColor(context),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, -5),
+          ),
+        ],
+      ),
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
         left: 24,
         right: 24,
-        top: 24,
+        top: 12,
       ),
       child: Form(
         key: _formKey,
@@ -157,6 +170,18 @@ class _AddHolidayExpenseSheetState
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Drag Indicator
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 24),
+                  decoration: BoxDecoration(
+                    color: AppTheme.getBorderColor(context, opacity: 0.5),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
               Text(
                 'Add Holiday Expense',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -170,33 +195,27 @@ class _AddHolidayExpenseSheetState
                   child: Text(
                     'Primary Currency: $_homeCurrency',
                     style: TextStyle(
-                      color: Colors.grey[600],
+                      color: AppTheme.getTextColor(context, opacity: 0.5),
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                     ),
                     textAlign: TextAlign.center,
                   ),
                 ),
-              const SizedBox(height: 24),
+              AppSpacing.gapXxl,
               // Local Currency Field
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     flex: 2,
-                    child: TextFormField(
+                    child: _buildModernTextField(
                       controller: _localAmountController,
-                      onChanged: _onLocalAmountChanged,
-                      decoration: InputDecoration(
-                        labelText: 'Amount (${_selectedCurrency})',
-                        prefixIcon:
-                            const Icon(Icons.location_on_outlined, size: 20),
-                        border: const OutlineInputBorder(),
-                        helperText: 'Enter local spending',
-                      ),
+                      label: 'Amount (${_selectedCurrency})',
+                      icon: Icons.location_on_rounded,
                       keyboardType:
                           const TextInputType.numberWithOptions(decimal: true),
-                      autofocus: true,
+                      onChanged: _onLocalAmountChanged,
                       validator: (val) {
                         if (val == null || val.isEmpty) return 'Required';
                         if (double.tryParse(val) == null)
@@ -205,13 +224,33 @@ class _AddHolidayExpenseSheetState
                       },
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  AppSpacing.gapMd,
                   Expanded(
                     child: DropdownButtonFormField<String>(
                       value: _selectedCurrency,
-                      decoration: const InputDecoration(
+                      icon: Icon(Icons.keyboard_arrow_down_rounded,
+                          color: AppTheme.primaryColor),
+                      decoration: InputDecoration(
                         labelText: 'Currency',
-                        border: OutlineInputBorder(),
+                        labelStyle: TextStyle(
+                            color: AppTheme.getTextColor(context,
+                                isSecondary: true)),
+                        filled: true,
+                        fillColor:
+                            AppTheme.getBorderColor(context, opacity: 0.2),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(AppSpacing.r16),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(AppSpacing.r16),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(AppSpacing.r16),
+                          borderSide: BorderSide(
+                              color: AppTheme.primaryColor, width: 2),
+                        ),
                       ),
                       items: [
                         'USD',
@@ -241,22 +280,17 @@ class _AddHolidayExpenseSheetState
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               // Primary Currency Field (Calculated/Synched)
               if (_homeCurrency != null && _selectedCurrency != _homeCurrency)
-                TextFormField(
+                _buildModernTextField(
                   controller: _primaryAmountController,
-                  onChanged: _onPrimaryAmountChanged,
-                  decoration: InputDecoration(
-                    labelText: 'Amount in ${_homeCurrency} (Primary)',
-                    prefixIcon: const Icon(Icons.home_outlined, size: 20),
-                    border: const OutlineInputBorder(),
-                    filled: true,
-                    fillColor: Colors.blue.withOpacity(0.05),
-                    helperText: 'Auto-converted value to save',
-                  ),
+                  label: 'Amount in ${_homeCurrency} (Primary)',
+                  icon: Icons.home_rounded,
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
+                  onChanged: _onPrimaryAmountChanged,
+                  fillColor: AppTheme.primaryColor.withOpacity(0.05),
                   validator: (val) {
                     if (val == null || val.isEmpty) return 'Required';
                     if (double.tryParse(val) == null) return 'Invalid amount';
@@ -267,12 +301,32 @@ class _AddHolidayExpenseSheetState
                 const Center(child: CircularProgressIndicator())
               else
                 const SizedBox.shrink(),
-              const SizedBox(height: 16),
+              if (_homeCurrency != null && _selectedCurrency != _homeCurrency)
+                const SizedBox(height: 20),
+
               DropdownButtonFormField<HolidayExpenseCategory>(
                 value: _category,
-                decoration: const InputDecoration(
+                icon: Icon(Icons.keyboard_arrow_down_rounded,
+                    color: AppTheme.primaryColor),
+                decoration: InputDecoration(
                   labelText: 'Category',
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                      color: AppTheme.getTextColor(context, isSecondary: true)),
+                  filled: true,
+                  fillColor: AppTheme.getBorderColor(context, opacity: 0.2),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppSpacing.r16),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppSpacing.r16),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppSpacing.r16),
+                    borderSide:
+                        BorderSide(color: AppTheme.primaryColor, width: 2),
+                  ),
                 ),
                 items: HolidayExpenseCategory.values.map((cat) {
                   return DropdownMenuItem(
@@ -280,8 +334,10 @@ class _AddHolidayExpenseSheetState
                     child: Row(
                       children: [
                         Icon(cat.icon, color: cat.color),
-                        const SizedBox(width: 12),
-                        Text(cat.label),
+                        AppSpacing.gapMd,
+                        Text(cat.label,
+                            style:
+                                const TextStyle(fontWeight: FontWeight.w500)),
                       ],
                     ),
                   );
@@ -290,72 +346,159 @@ class _AddHolidayExpenseSheetState
                   if (val != null) setState(() => _category = val);
                 },
               ),
-              const SizedBox(height: 16),
-              TextFormField(
+              const SizedBox(height: 20),
+              _buildModernTextField(
                 controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Description',
-                  prefixIcon: Icon(Icons.description),
-                  border: OutlineInputBorder(),
-                ),
+                label: 'Description',
+                icon: Icons.description_rounded,
                 validator: (val) =>
                     val == null || val.isEmpty ? 'Required' : null,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               Row(
                 children: [
                   Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: _pickImage,
-                      icon: Icon(_receiptPath == null
-                          ? Icons.camera_alt
-                          : Icons.check_circle),
-                      label: Text(_receiptPath == null
-                          ? 'Capture Receipt'
-                          : 'Receipt Captured'),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        foregroundColor:
-                            _receiptPath == null ? null : Colors.green,
+                    child: InkWell(
+                      onTap: _pickImage,
+                      borderRadius: BorderRadius.circular(AppSpacing.r16),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        decoration: BoxDecoration(
+                          color: _receiptPath == null
+                              ? Colors.transparent
+                              : AppTheme.successColor.withOpacity(0.1),
+                          border: Border.all(
+                            color: _receiptPath == null
+                                ? AppTheme.getBorderColor(context)!
+                                : AppTheme.successColor,
+                            width: 1.5,
+                          ),
+                          borderRadius: BorderRadius.circular(AppSpacing.r16),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                                _receiptPath == null
+                                    ? Icons.camera_alt_rounded
+                                    : Icons.check_circle_rounded,
+                                color: _receiptPath == null
+                                    ? AppTheme.primaryColor
+                                    : AppTheme.successColor),
+                            AppSpacing.gapSm,
+                            Text(
+                                _receiptPath == null
+                                    ? 'Capture Receipt'
+                                    : 'Receipt Captured',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: _receiptPath == null
+                                      ? AppTheme.primaryColor
+                                      : AppTheme.successColor,
+                                )),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                   if (_receiptPath != null) ...[
-                    const SizedBox(width: 8),
-                    IconButton(
-                      onPressed: () => setState(() => _receiptPath = null),
-                      icon: const Icon(Icons.delete_outline, color: Colors.red),
+                    AppSpacing.gapMd,
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppTheme.dangerColor.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        onPressed: () => setState(() => _receiptPath = null),
+                        icon: const Icon(Icons.delete_outline_rounded,
+                            color: AppTheme.dangerColor),
+                        tooltip: 'Remove Receipt',
+                      ),
                     ),
                   ],
                 ],
               ),
               if (_receiptPath != null)
                 Padding(
-                  padding: const EdgeInsets.only(top: 8),
+                  padding: const EdgeInsets.only(top: 16),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(AppSpacing.r16),
                     child: Image.file(
                       File(_receiptPath!),
-                      height: 100,
+                      height: 120,
                       width: double.infinity,
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
-              const SizedBox(height: 24),
+              AppSpacing.gapXxl,
               ElevatedButton(
                 onPressed: _submit,
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  backgroundColor: AppTheme.primaryColor,
+                  foregroundColor: Colors.white,
+                  elevation: 8,
+                  shadowColor: AppTheme.primaryColor.withOpacity(0.5),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(AppSpacing.r16),
                   ),
                 ),
-                child: const Text('Add Expense'),
+                child: const Text('Add Expense',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
               ),
-              const SizedBox(height: 16),
+              AppSpacing.gapXl,
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModernTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    TextInputType? keyboardType,
+    int maxLines = 1,
+    String? Function(String?)? validator,
+    void Function(String)? onChanged,
+    Color? fillColor,
+  }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      maxLines: maxLines,
+      validator: validator,
+      onChanged: onChanged,
+      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle:
+            TextStyle(color: AppTheme.getTextColor(context, isSecondary: true)),
+        prefixIcon: Icon(icon, color: AppTheme.primaryColor),
+        filled: true,
+        fillColor: fillColor ?? AppTheme.getBorderColor(context, opacity: 0.2),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.r16),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.r16),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.r16),
+          borderSide: BorderSide(color: AppTheme.primaryColor, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.r16),
+          borderSide: BorderSide(color: AppTheme.dangerColor, width: 2),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.r16),
+          borderSide: BorderSide(color: AppTheme.dangerColor, width: 2),
         ),
       ),
     );

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'core/theme/app_theme.dart';
-import 'features/home/presentation/pages/home_page.dart';
+import 'theme/app_theme.dart';
+import 'features/home/presentation/pages/main_shell.dart';
 import 'features/splash/presentation/pages/splash_screen.dart';
 import 'features/auth/presentation/pages/login_page.dart';
 import 'features/auth/presentation/providers/auth_provider.dart';
@@ -57,9 +57,9 @@ class MyApp extends ConsumerWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Everyday Expenses',
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: profile.themeMode,
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: ThemeMode.light,
       locale: Locale(profile.language),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
@@ -86,6 +86,6 @@ class AuthWrapper extends ConsumerWidget {
     // Determine if logged in (strictly Firebase user)
     final isLoggedIn = firebaseUserAsync.value != null;
 
-    return isLoggedIn ? const HomePage() : const LoginPage();
+    return isLoggedIn ? const MainShell() : const LoginPage();
   }
 }

@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import '../providers/goal_provider.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/models/financial_goal.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class AddGoalSheet extends ConsumerStatefulWidget {
   const AddGoalSheet({super.key});
@@ -69,7 +70,7 @@ class _AddGoalSheetState extends ConsumerState<AddGoalSheet> {
                     ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 24),
+              AppSpacing.gapXl,
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(
@@ -79,7 +80,7 @@ class _AddGoalSheetState extends ConsumerState<AddGoalSheet> {
                 validator: (val) =>
                     val == null || val.isEmpty ? 'Required' : null,
               ),
-              const SizedBox(height: 16),
+              AppSpacing.gapLg,
               TextFormField(
                 controller: _amountController,
                 decoration: const InputDecoration(
@@ -94,12 +95,12 @@ class _AddGoalSheetState extends ConsumerState<AddGoalSheet> {
                   return null;
                 },
               ),
-              const SizedBox(height: 24),
+              AppSpacing.gapXl,
               const Text(
                 'Goal Type',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 8),
+              AppSpacing.gapSm,
               SegmentedButton<GoalType>(
                 segments: GoalType.values.map((t) {
                   return ButtonSegment(
@@ -115,7 +116,7 @@ class _AddGoalSheetState extends ConsumerState<AddGoalSheet> {
                   setState(() => _type = val.first);
                 },
               ),
-              const SizedBox(height: 24),
+              AppSpacing.gapXl,
               ListTile(
                 title: const Text('Deadline'),
                 subtitle: Text(
@@ -131,7 +132,7 @@ class _AddGoalSheetState extends ConsumerState<AddGoalSheet> {
                   if (picked != null) setState(() => _deadline = picked);
                 },
               ),
-              const SizedBox(height: 32),
+              AppSpacing.gapXxl,
               ElevatedButton(
                 onPressed: _submit,
                 style: ElevatedButton.styleFrom(
@@ -139,14 +140,14 @@ class _AddGoalSheetState extends ConsumerState<AddGoalSheet> {
                   backgroundColor: AppTheme.primaryColor,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(AppSpacing.r12),
                   ),
                 ),
                 child: const Text('Set Goal',
                     style:
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               ),
-              const SizedBox(height: 24),
+              AppSpacing.gapXl,
             ],
           ),
         ),

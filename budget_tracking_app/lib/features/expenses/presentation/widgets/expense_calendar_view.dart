@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/expense.dart';
 import '../../../../core/theme/app_theme.dart';
 import 'package:intl/intl.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
+import 'package:budget_tracking_app/core/utils/currency_formatter.dart';
 
 class ExpenseCalendarView extends ConsumerStatefulWidget {
   final List<Expense> expenses;
@@ -104,7 +106,7 @@ class _ExpenseCalendarViewState extends ConsumerState<ExpenseCalendarView> {
             _focusedDay = focusedDay;
           },
         ),
-        const SizedBox(height: 16),
+        AppSpacing.gapLg,
         _buildRangeQuickSelect(),
         const Divider(),
         Expanded(
@@ -184,7 +186,7 @@ class _ExpenseCalendarViewState extends ConsumerState<ExpenseCalendarView> {
           title: Text(expense.category.label),
           subtitle: Text(DateFormat('MMM dd, yyyy').format(expense.date)),
           trailing: Text(
-            '${expense.isIncome ? "+" : "-"}${NumberFormat.simpleCurrency(name: expense.currency).format(expense.amount)}',
+            '${expense.isIncome ? "+" : "-"}${CurrencyFormatter.format(expense.amount, expense.currency)}',
             style: TextStyle(
               color: expense.isIncome
                   ? AppTheme.successColor

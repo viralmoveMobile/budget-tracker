@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import '../providers/account_provider.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../data/models/account.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class AddAccountSheet extends ConsumerStatefulWidget {
   const AddAccountSheet({super.key});
@@ -61,7 +62,7 @@ class _AddAccountSheetState extends ConsumerState<AddAccountSheet> {
                     fontWeight: FontWeight.bold, color: Colors.black87),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 24),
+              AppSpacing.gapXl,
               TextFormField(
                 controller: _nameController,
                 autofocus: true,
@@ -74,7 +75,7 @@ class _AddAccountSheetState extends ConsumerState<AddAccountSheet> {
                 validator: (value) =>
                     value == null || value.isEmpty ? 'Required' : null,
               ),
-              const SizedBox(height: 24),
+              AppSpacing.gapXl,
               ElevatedButton(
                 onPressed: _submit,
                 style: ElevatedButton.styleFrom(
@@ -82,14 +83,14 @@ class _AddAccountSheetState extends ConsumerState<AddAccountSheet> {
                   backgroundColor: AppTheme.primaryColor,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(AppSpacing.r12),
                   ),
                 ),
                 child: const Text('Add Account',
                     style:
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               ),
-              const SizedBox(height: 24),
+              AppSpacing.gapXl,
             ],
           ),
         ),

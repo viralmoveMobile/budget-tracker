@@ -1,3 +1,5 @@
+import '../../../../widgets/ui/app_app_bar.dart';
+import '../../../../widgets/ui/app_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -6,6 +8,7 @@ import '../providers/cash_book_sync_provider.dart';
 import '../providers/budget_sync_provider.dart';
 import '../providers/firestore_sharing_provider.dart';
 import 'member_detail_page.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class SharedDataHubPage extends ConsumerWidget {
   const SharedDataHubPage({super.key});
@@ -17,13 +20,51 @@ class SharedDataHubPage extends ConsumerWidget {
     final sharedBudgetsAsync = ref.watch(sharedBudgetsProvider);
     final relationshipsAsync = ref.watch(usersSharedWithMeProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title:
-            Text('Shared Data', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: AppTheme.primaryColor,
-        foregroundColor: Colors.white,
-        elevation: 0,
+    return AppScaffold(
+      withTealHeader: true,
+      backgroundColor: AppTheme.backgroundLight,
+      appBar: AppAppBar(
+        title: const Text('Shared Data',
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        iconTheme: const IconThemeData(color: Colors.white),
+        centerTitle: true,
+      ),
+      heroContent: Padding(
+        padding: AppSpacing.listItemPadding,
+        child: Row(
+          children: [
+            _buildHeroStat(
+              context,
+              sharedExpensesAsync.value?.length ?? 0,
+              'Expenses',
+              Icons.receipt_long_rounded,
+            ),
+            Container(
+                width: 1, height: 36, color: Colors.white.withOpacity(0.3)),
+            _buildHeroStat(
+              context,
+              sharedCashBookAsync.value?.length ?? 0,
+              'Cash Book',
+              Icons.book_rounded,
+            ),
+            Container(
+                width: 1, height: 36, color: Colors.white.withOpacity(0.3)),
+            _buildHeroStat(
+              context,
+              sharedBudgetsAsync.value?.length ?? 0,
+              'Budgets',
+              Icons.savings_rounded,
+            ),
+            Container(
+                width: 1, height: 36, color: Colors.white.withOpacity(0.3)),
+            _buildHeroStat(
+              context,
+              relationshipsAsync.value?.length ?? 0,
+              'Partners',
+              Icons.people_rounded,
+            ),
+          ],
+        ),
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -33,73 +74,28 @@ class SharedDataHubPage extends ConsumerWidget {
         },
         child: CustomScrollView(
           slivers: [
-            // Summary Section
+            // Section header
             SliverToBoxAdapter(
-              child: Container(
-                margin: const EdgeInsets.all(16),
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppTheme.primaryColor,
-                      AppTheme.primaryColor.withOpacity(0.8),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppTheme.primaryColor.withOpacity(0.3),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
+                child: Row(
                   children: [
-                    Row(
-                      children: [
-                        Icon(Icons.dashboard_rounded,
-                            color: AppTheme.getSurfaceColor(context), size: 28),
-                        SizedBox(width: 12),
-                        Text(
-                          'Summary',
-                          style: TextStyle(
-                            color: AppTheme.getSurfaceColor(context),
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                    Container(
+                      width: 4,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryColor,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
-                    SizedBox(height: 16),
-                    _buildSummaryRow(
-                      context,
-                      'Expenses',
-                      sharedExpensesAsync.value?.length ?? 0,
-                      Icons.receipt_long_rounded,
-                    ),
-                    const SizedBox(height: 8),
-                    _buildSummaryRow(
-                      context,
-                      'Transactions',
-                      sharedCashBookAsync.value?.length ?? 0,
-                      Icons.book_rounded,
-                    ),
-                    const SizedBox(height: 8),
-                    _buildSummaryRow(
-                      context,
-                      'Budgets',
-                      sharedBudgetsAsync.value?.length ?? 0,
-                      Icons.savings_rounded,
-                    ),
-                    const Divider(
-                        height: 24, color: Colors.white38, thickness: 1),
-                    _buildSummaryRow(
-                      context,
+                    const SizedBox(width: 10),
+                    const Text(
                       'Sharing Partners',
-                      relationshipsAsync.value?.length ?? 0,
-                      Icons.people_rounded,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.textPrimary,
+                      ),
                     ),
                   ],
                 ),
@@ -112,48 +108,61 @@ class SharedDataHubPage extends ConsumerWidget {
                 if (relationships.isEmpty) {
                   return SliverFillRemaining(
                     child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.people_outline_rounded,
-                              size: 80,
-                              color: AppTheme.getTextColor(context,
-                                  isSecondary: true, opacity: 0.5)),
-                          SizedBox(height: 16),
-                          Text(
-                            'No sharing partners yet',
-                            style: TextStyle(
-                                color: AppTheme.getTextColor(context,
-                                    isSecondary: true),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Invite others to start sharing data',
-                            style: TextStyle(
-                                color: AppTheme.getTextColor(context,
-                                    isSecondary: true, opacity: 0.9)),
-                          ),
-                        ],
+                      child: Padding(
+                        padding: const EdgeInsets.all(40),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 80,
+                              height: 80,
+                              decoration: BoxDecoration(
+                                color: AppTheme.primaryColor.withOpacity(0.1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.people_outline_rounded,
+                                  size: 40, color: AppTheme.primaryColor),
+                            ),
+                            const SizedBox(height: 20),
+                            const Text(
+                              'No sharing partners yet',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppTheme.textPrimary),
+                            ),
+                            AppSpacing.gapSm,
+                            Text(
+                              'Invite others to start sharing data',
+                              style: TextStyle(
+                                  color: AppTheme.getTextColor(context,
+                                      isSecondary: true)),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );
                 }
 
-                return SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final relationship = relationships[index];
-                      return _buildPartnerCard(
-                        context,
-                        ref,
-                        relationship.ownerEmail,
-                        relationship.ownerId,
-                        relationship.dataTypes,
-                      );
-                    },
-                    childCount: relationships.length,
+                return SliverPadding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final relationship = relationships[index];
+                        return _buildPartnerCard(
+                          context,
+                          ref,
+                          relationship.ownerEmail,
+                          relationship.ownerId,
+                          relationship.dataTypes,
+                        );
+                      },
+                      childCount: relationships.length,
+                    ),
                   ),
                 );
               },
@@ -172,40 +181,33 @@ class SharedDataHubPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildSummaryRow(
-      BuildContext context, String label, int count, IconData icon) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Icon(icon, color: Colors.white70, size: 20),
-            SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: 15,
+  Widget _buildHeroStat(
+      BuildContext context, int count, String label, IconData icon) {
+    return Expanded(
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 14, color: Colors.white.withOpacity(0.9)),
+              AppSpacing.gapXs,
+              Text(
+                label,
+                style: TextStyle(
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500),
               ),
-            ),
-          ],
-        ),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(12),
+            ],
           ),
-          child: Text(
-            count.toString(),
-            style: TextStyle(
-              color: AppTheme.getSurfaceColor(context),
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+          AppSpacing.gapXs,
+          Text(
+            '$count',
+            style: const TextStyle(
+                color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -228,22 +230,16 @@ class SharedDataHubPage extends ConsumerWidget {
     final name = email.split('@').first;
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: AppTheme.getSurfaceColor(context),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.getDividerColor(context),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           onTap: () {
             Navigator.push(
               context,
@@ -257,32 +253,36 @@ class SharedDataHubPage extends ConsumerWidget {
             );
           },
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.cardPadding,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Partner header row
                 Row(
                   children: [
                     CircleAvatar(
+                      radius: 24,
                       backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
                       child: Text(
                         name[0].toUpperCase(),
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: AppTheme.primaryColor,
                           fontWeight: FontWeight.bold,
+                          fontSize: 18,
                         ),
                       ),
                     ),
-                    SizedBox(width: 12),
+                    AppSpacing.gapMd,
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             name,
-                            style: TextStyle(
-                              fontSize: 18,
+                            style: const TextStyle(
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
+                              color: AppTheme.textPrimary,
                             ),
                           ),
                           Text(
@@ -290,42 +290,27 @@ class SharedDataHubPage extends ConsumerWidget {
                             style: TextStyle(
                               color: AppTheme.getTextColor(context,
                                   isSecondary: true),
-                              fontSize: 13,
+                              fontSize: 12,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    Icon(Icons.chevron_right_rounded,
-                        color:
-                            AppTheme.getTextColor(context, isSecondary: true)),
+                    const Icon(Icons.chevron_right_rounded,
+                        color: AppTheme.textSecondary),
                   ],
                 ),
-                const Divider(height: 24),
+                const Divider(height: 20),
+                // Data type stats row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildDataTypeChip(
-                      context,
-                      'Expenses',
-                      expenseCount,
-                      Icons.receipt_long_rounded,
-                      AppTheme.expensesColor,
-                    ),
-                    _buildDataTypeChip(
-                      context,
-                      'Cash Book',
-                      cashBookCount,
-                      Icons.book_rounded,
-                      AppTheme.accountsColor,
-                    ),
-                    _buildDataTypeChip(
-                      context,
-                      'Budgets',
-                      budgetCount,
-                      Icons.savings_rounded,
-                      AppTheme.primaryColor,
-                    ),
+                    _buildDataStat(context, 'Expenses', expenseCount,
+                        Icons.receipt_long_rounded),
+                    _buildDataStat(context, 'Cash Book', cashBookCount,
+                        Icons.book_rounded),
+                    _buildDataStat(
+                        context, 'Budgets', budgetCount, Icons.savings_rounded),
                   ],
                 ),
               ],
@@ -336,215 +321,33 @@ class SharedDataHubPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildDataTypeChip(BuildContext context, String label, int count,
-      IconData icon, Color color) {
+  Widget _buildDataStat(
+      BuildContext context, String label, int count, IconData icon) {
     return Column(
       children: [
-        Icon(icon, color: color, size: 24),
-        SizedBox(height: 4),
+        Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: AppTheme.primaryColor.withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: AppTheme.primaryColor, size: 18),
+        ),
+        const SizedBox(height: 6),
         Text(
-          count.toString(),
-          style: TextStyle(
-            fontSize: 18,
+          '$count',
+          style: const TextStyle(
+            fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: color,
+            color: AppTheme.primaryColor,
           ),
         ),
         Text(
           label,
           style: TextStyle(
-            fontSize: 11,
+            fontSize: 10,
             color: AppTheme.getTextColor(context, isSecondary: true),
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _showPartnerDetails(
-    BuildContext context,
-    WidgetRef ref,
-    String name,
-    String email,
-    String userId,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        maxChildSize: 0.95,
-        minChildSize: 0.5,
-        builder: (context, scrollController) => Container(
-          decoration: BoxDecoration(
-            color: AppTheme.getSurfaceColor(context),
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          padding: EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: AppTheme.getTextColor(context,
-                        isSecondary: true, opacity: 0.5),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16),
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
-                    child: Text(
-                      name[0].toUpperCase(),
-                      style: TextStyle(
-                        color: AppTheme.primaryColor,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          name,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          email,
-                          style: TextStyle(
-                            color: AppTheme.getTextColor(context,
-                                isSecondary: true),
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Shared Data',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[800],
-                ),
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: ListView(
-                  controller: scrollController,
-                  children: [
-                    _buildDetailSection(
-                      ref,
-                      context,
-                      'Expenses',
-                      Icons.receipt_long_rounded,
-                      AppTheme.expensesColor,
-                      ref.watch(sharedExpensesByUserProvider(userId)),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildDetailSection(
-                      ref,
-                      context,
-                      'Cash Book',
-                      Icons.book_rounded,
-                      AppTheme.accountsColor,
-                      ref.watch(sharedCashBookEntriesByUserProvider(userId)),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildDetailSection(
-                      ref,
-                      context,
-                      'Budgets',
-                      Icons.savings_rounded,
-                      AppTheme.primaryColor,
-                      ref.watch(sharedBudgetsByUserProvider(userId)),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDetailSection(
-    WidgetRef ref,
-    BuildContext context,
-    String title,
-    IconData icon,
-    Color color,
-    AsyncValue<List<dynamic>> dataAsync,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(icon, color: color, size: 20),
-            SizedBox(width: 8),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 8),
-        dataAsync.when(
-          data: (items) {
-            if (items.isEmpty) {
-              return Padding(
-                padding: EdgeInsets.all(12),
-                child: Text(
-                  'No $title shared',
-                  style: TextStyle(
-                      color: AppTheme.getTextColor(context,
-                          isSecondary: true, opacity: 0.9)),
-                ),
-              );
-            }
-            return Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: color.withOpacity(0.2)),
-              ),
-              child: Text(
-                '${items.length} $title',
-                style: TextStyle(
-                  color: color,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            );
-          },
-          loading: () => const LinearProgressIndicator(),
-          error: (_, __) => Text(
-            'Error loading $title',
-            style: const TextStyle(color: Colors.red),
           ),
         ),
       ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class EditSharedDataTypesSheet extends StatefulWidget {
   final String memberEmail;
@@ -49,7 +50,7 @@ class _EditSharedDataTypesSheetState extends State<EditSharedDataTypesSheet> {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          AppSpacing.gapLg,
           Text(
             'Edit Shared Data',
             style: const TextStyle(
@@ -57,7 +58,7 @@ class _EditSharedDataTypesSheetState extends State<EditSharedDataTypesSheet> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8),
+          AppSpacing.gapSm,
           Text(
             'Select which data types to share with ${widget.memberEmail}',
             style: TextStyle(
@@ -65,7 +66,7 @@ class _EditSharedDataTypesSheetState extends State<EditSharedDataTypesSheet> {
               fontSize: 14,
             ),
           ),
-          const SizedBox(height: 24),
+          AppSpacing.gapXl,
           _buildDataTypeOption(
             'Expenses',
             'expenses',
@@ -87,7 +88,7 @@ class _EditSharedDataTypesSheetState extends State<EditSharedDataTypesSheet> {
             AppTheme.primaryColor,
             'Share budget limits',
           ),
-          const SizedBox(height: 24),
+          AppSpacing.gapXl,
           Row(
             children: [
               Expanded(
@@ -96,13 +97,13 @@ class _EditSharedDataTypesSheetState extends State<EditSharedDataTypesSheet> {
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(AppSpacing.r12),
                     ),
                   ),
                   child: const Text('Cancel'),
                 ),
               ),
-              const SizedBox(width: 12),
+              AppSpacing.gapMd,
               Expanded(
                 child: ElevatedButton(
                   onPressed: _selectedTypes.isEmpty
@@ -116,7 +117,7 @@ class _EditSharedDataTypesSheetState extends State<EditSharedDataTypesSheet> {
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(AppSpacing.r12),
                     ),
                   ),
                   child: const Text('Save Changes'),
@@ -124,7 +125,7 @@ class _EditSharedDataTypesSheetState extends State<EditSharedDataTypesSheet> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          AppSpacing.gapSm,
         ],
       ),
     );
@@ -146,7 +147,7 @@ class _EditSharedDataTypesSheetState extends State<EditSharedDataTypesSheet> {
           color: isSelected ? color : Colors.grey[300]!,
           width: isSelected ? 2 : 1,
         ),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppSpacing.r12),
         color: isSelected ? color.withOpacity(0.05) : Colors.white,
       ),
       child: CheckboxListTile(
@@ -163,7 +164,7 @@ class _EditSharedDataTypesSheetState extends State<EditSharedDataTypesSheet> {
         title: Row(
           children: [
             Icon(icon, color: color, size: 20),
-            const SizedBox(width: 12),
+            AppSpacing.gapMd,
             Text(
               title,
               style: TextStyle(

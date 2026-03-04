@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/goal_provider.dart';
 import '../../domain/models/financial_goal.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class GoalListWidget extends ConsumerWidget {
   const GoalListWidget({super.key});
@@ -35,7 +36,7 @@ class _GoalCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.cardPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -50,7 +51,7 @@ class _GoalCard extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: color.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(AppSpacing.r12),
                   ),
                   child: Text(
                     goal.type.label,
@@ -62,7 +63,7 @@ class _GoalCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            AppSpacing.gapLg,
             Row(
               children: [
                 Expanded(
@@ -74,12 +75,12 @@ class _GoalCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(5),
                   ),
                 ),
-                const SizedBox(width: 16),
+                AppSpacing.gapLg,
                 Text('${(goal.progress * 100).toStringAsFixed(0)}%',
                     style: const TextStyle(fontWeight: FontWeight.bold)),
               ],
             ),
-            const SizedBox(height: 8),
+            AppSpacing.gapSm,
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

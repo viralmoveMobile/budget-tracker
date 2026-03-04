@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class FeatureCard extends StatelessWidget {
   final String title;
@@ -27,7 +28,7 @@ class FeatureCard extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         color: AppTheme.getSurfaceColor(context), // theme-aware surface color
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(AppSpacing.r24),
         border: Border.all(
           color: color.withOpacity(0.2),
           width: 1.5,
@@ -50,9 +51,9 @@ class FeatureCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(AppSpacing.r24),
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: AppSpacing.cardPadding,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -62,7 +63,7 @@ class FeatureCard extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
                     color: color.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(AppSpacing.r12),
                   ),
                   child: Row(
                     children: [
@@ -71,7 +72,7 @@ class FeatureCard extends StatelessWidget {
                         size: 18,
                         color: color,
                       ),
-                      const SizedBox(width: 8),
+                      AppSpacing.gapSm,
                       Expanded(
                         child: Text(
                           title,
@@ -87,7 +88,7 @@ class FeatureCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 12),
+                AppSpacing.gapMd,
                 // Content
                 Expanded(child: child),
               ],

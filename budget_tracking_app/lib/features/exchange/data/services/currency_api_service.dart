@@ -24,7 +24,9 @@ class CurrencyApiService {
     }
 
     try {
-      final response = await http.get(Uri.parse('$_baseUrl/$baseCurrency'));
+      final response = await http
+          .get(Uri.parse('$_baseUrl/$baseCurrency'))
+          .timeout(const Duration(seconds: 5));
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['result'] == 'success') {

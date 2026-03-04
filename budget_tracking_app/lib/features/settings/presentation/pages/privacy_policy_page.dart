@@ -1,14 +1,17 @@
+import '../../../../widgets/ui/app_app_bar.dart';
+import '../../../../widgets/ui/app_scaffold.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class PrivacyPolicyPage extends StatelessWidget {
   const PrivacyPolicyPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppScaffold(
       backgroundColor: const Color(0xFFF5F5F7),
-      appBar: AppBar(
+      appBar: AppAppBar(
         title: Text('Privacy Policy',
             style: TextStyle(
                 color: AppTheme.getSurfaceColor(context),
@@ -29,28 +32,28 @@ class PrivacyPolicyPage extends StatelessWidget {
                 'Your privacy is our priority. This application is designed to keep your financial data strictly on your device.',
                 isBold: true,
               ),
-              const SizedBox(height: 16),
+              AppSpacing.gapLg,
               _buildPolicyText(
                 context,
                 '1. Local Storage: All expenses, accounts, and financial records are stored locally in an encrypted SQLite database. We do not transmit this data to any external servers without your explicit action (like exporting to CSV).',
               ),
-              const SizedBox(height: 12),
+              AppSpacing.gapMd,
               _buildPolicyText(
                 context,
                 '2. Authentication: We use Firebase Auth for secure login. Only your profile information (Name, Email, Profile Picture) is synced with Google/Firebase services to manage your account access.',
               ),
-              const SizedBox(height: 12),
+              AppSpacing.gapMd,
               _buildPolicyText(
                 context,
                 '3. Security Measures: We support Biometric Authentication (Fingerprint/FaceID) to ensure only you can access your financial hub.',
               ),
-              const SizedBox(height: 12),
+              AppSpacing.gapMd,
               _buildPolicyText(
                 context,
                 '4. Data Retention: Your data is kept as long as the application remains installed. You can delete all your data at any time by clearing the application storage or choosing the delete option in data settings.',
               ),
             ]),
-            const SizedBox(height: 32),
+            AppSpacing.gapXxl,
             _buildSectionTitle(context, 'Third-Party Services'),
             _buildCard(context, [
               _buildBulletPoint(
@@ -98,7 +101,7 @@ class PrivacyPolicyPage extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppTheme.getSurfaceColor(context),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(AppSpacing.r24),
         boxShadow: [
           BoxShadow(
             color: AppTheme.getDividerColor(context),

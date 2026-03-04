@@ -1,5 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,10 +26,23 @@ class LocationService {
   String get _primaryCurrencyKey => '$_primaryCurrencyPrefix$userId';
 
   Future<String> getCurrentLocationCurrencyCode() async {
+    // 1. Try to detect via System Locale (fast, offline)
+    try {
+      final locale = Platform.localeName;
+      final format = NumberFormat.simpleCurrency(locale: locale);
+      final localeCurrency = format.currencyName;
+      if (localeCurrency != null && localeCurrency.length == 3) {
+        return localeCurrency;
+      }
+    } catch (_) {
+      // Fallback to network if locale detection fails
+    }
+
+    // 2. Try to detect via IP (refined, requires network)
     try {
       final response = await http
           .get(Uri.parse(_ipApiUrl))
-          .timeout(const Duration(seconds: 5));
+          .timeout(const Duration(seconds: 10));
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final currency = data['currency'] as String?;
@@ -33,8 +50,10 @@ class LocationService {
           return currency;
         }
       }
+    } on TimeoutException catch (_) {
+      debugPrint('Location detection timed out (using fallback USD).');
     } catch (e) {
-      print('Error detecting location via IP (using fallback USD): $e');
+      debugPrint('Error detecting location via IP (using fallback USD): $e');
     }
     return 'USD';
   }

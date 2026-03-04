@@ -5,8 +5,10 @@ import 'package:intl/intl.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../providers/budget_provider.dart';
 import '../../data/models/expense_category.dart';
+import 'package:budget_tracking_app/core/utils/currency_formatter.dart';
 
 import 'package:budget_tracking_app/features/my_account/presentation/providers/profile_provider.dart';
+import '../../../../core/theme/app_spacing.dart';
 
 class BudgetOverview extends ConsumerWidget {
   const BudgetOverview({super.key});
@@ -26,11 +28,11 @@ class BudgetOverview extends ConsumerWidget {
         usage['categoryUsage'] as Map<ExpenseCategory, Map<String, double>>;
 
     return Container(
-      margin: const EdgeInsets.all(20),
-      padding: const EdgeInsets.all(24),
+      margin: const EdgeInsets.symmetric(vertical: AppSpacing.md, horizontal: AppSpacing.md),
+      padding: AppSpacing.cardPadding,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(AppSpacing.r24),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -50,11 +52,11 @@ class BudgetOverview extends ConsumerWidget {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md, vertical: AppSpacing.sm),
                 decoration: BoxDecoration(
                   color: AppTheme.primaryColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(AppSpacing.r12),
                 ),
                 child: Text(
                   '${(totalSpent / (totalLimit > 0 ? totalLimit : 1) * 100).toStringAsFixed(0)}% used',
@@ -67,7 +69,7 @@ class BudgetOverview extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          AppSpacing.gapXl,
           _buildProgressBar(
             context,
             'Total Budget',
@@ -78,14 +80,14 @@ class BudgetOverview extends ConsumerWidget {
             currency: profile.currency,
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
             child: Divider(color: Colors.grey.withOpacity(0.1)),
           ),
           ...categoryUsage.entries
               .where((e) => e.value['limit']! > 0)
               .map((entry) {
             return Padding(
-              padding: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.only(bottom: AppSpacing.lg),
               child: _buildProgressBar(
                 context,
                 entry.key.label,
@@ -122,7 +124,7 @@ class BudgetOverview extends ConsumerWidget {
           children: [
             if (icon != null) ...[
               Icon(icon, size: 16, color: effectiveColor.withOpacity(0.8)),
-              const SizedBox(width: 8),
+              AppSpacing.gapSm,
             ],
             Text(
               label,
@@ -137,9 +139,7 @@ class BudgetOverview extends ConsumerWidget {
               text: TextSpan(
                 children: [
                   TextSpan(
-                    text: NumberFormat.simpleCurrency(
-                            name: currency, decimalDigits: 0)
-                        .format(spent),
+                    text: CurrencyFormatter.format(spent, currency),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: isTotal ? 16 : 14,
@@ -148,7 +148,7 @@ class BudgetOverview extends ConsumerWidget {
                   ),
                   TextSpan(
                     text:
-                        ' / ${NumberFormat.simpleCurrency(name: currency, decimalDigits: 0).format(limit)}',
+                        ' / ${CurrencyFormatter.format(limit, currency)}',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.black54,
@@ -159,7 +159,7 @@ class BudgetOverview extends ConsumerWidget {
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        AppSpacing.gapMd,
         Stack(
           children: [
             Container(
@@ -196,7 +196,7 @@ class BudgetOverview extends ConsumerWidget {
         ),
         if (percent >= 0.9)
           Padding(
-            padding: const EdgeInsets.only(top: 8),
+            padding: const EdgeInsets.only(top: AppSpacing.sm),
             child: Text(
               percent >= 1.0 ? '⚠ Budget Exceeded' : '⚠ Near Limit',
               style: TextStyle(

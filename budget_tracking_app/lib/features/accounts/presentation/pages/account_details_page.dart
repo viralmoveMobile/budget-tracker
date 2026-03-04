@@ -1,3 +1,5 @@
+import '../../../../widgets/ui/app_app_bar.dart';
+import '../../../../widgets/ui/app_scaffold.dart';
 import 'package:budget_tracking_app/core/theme/app_theme.dart';
 import 'package:budget_tracking_app/features/my_account/presentation/providers/profile_provider.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,8 @@ import '../providers/account_provider.dart';
 import '../../data/models/account.dart';
 import '../../data/models/transaction.dart';
 import '../../../expenses/presentation/providers/expense_provider.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
+import 'package:budget_tracking_app/core/utils/currency_formatter.dart';
 
 class AccountDetailsPage extends ConsumerWidget {
   final Account account;
@@ -19,8 +23,8 @@ class AccountDetailsPage extends ConsumerWidget {
         ref.watch(accountTransactionsProvider(account.id));
     final currency = ref.watch(profileProvider).currency;
 
-    return Scaffold(
-      appBar: AppBar(
+    return AppScaffold(
+      appBar: AppAppBar(
         title: Text(account.name),
         actions: [
           IconButton(
@@ -40,7 +44,7 @@ class AccountDetailsPage extends ConsumerWidget {
                       child: Text('No transactions for this account'));
                 }
                 return ListView.separated(
-                  padding: const EdgeInsets.all(16),
+                  padding: AppSpacing.cardPadding,
                   itemCount: transactions.length,
                   separatorBuilder: (_, __) => const Divider(),
                   itemBuilder: (context, index) {
@@ -88,7 +92,7 @@ class AccountDetailsPage extends ConsumerWidget {
                     profile.currency),
               ],
             ),
-            const SizedBox(height: 16),
+            AppSpacing.gapLg,
             Chip(
               avatar:
                   Icon(account.type.icon, size: 16, color: account.type.color),
@@ -112,10 +116,9 @@ class AccountDetailsPage extends ConsumerWidget {
               color: AppTheme.getTextColor(context, isSecondary: true),
               fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 4),
+        AppSpacing.gapXs,
         Text(
-          NumberFormat.simpleCurrency(name: currency, decimalDigits: 0)
-              .format(amount),
+          CurrencyFormatter.format(amount, currency),
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -151,7 +154,7 @@ class AccountDetailsPage extends ConsumerWidget {
       title: Text(tx.category),
       subtitle: Text(DateFormat('MMM dd, yyyy • HH:mm').format(tx.date)),
       trailing: Text(
-        '${isNegative ? '-' : '+'}${NumberFormat.simpleCurrency(name: currency).format(tx.amount)}',
+        '${isNegative ? '-' : '+'}${CurrencyFormatter.format(tx.amount, currency)}',
         style: TextStyle(
           fontWeight: FontWeight.bold,
           color: isNegative ? Colors.red : Colors.green,

@@ -1,15 +1,18 @@
+import '../../../../widgets/ui/app_app_bar.dart';
+import '../../../../widgets/ui/app_scaffold.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class HelpSupportPage extends StatelessWidget {
   const HelpSupportPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppScaffold(
       backgroundColor: const Color(0xFFF5F5F7),
-      appBar: AppBar(
+      appBar: AppAppBar(
         title: Text('Help & Support',
             style: TextStyle(
                 color: AppTheme.getSurfaceColor(context),
@@ -22,9 +25,9 @@ class HelpSupportPage extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         children: [
           _buildHeroSection(context),
-          const SizedBox(height: 32),
+          AppSpacing.gapXxl,
           _buildSectionTitle(context, 'Quick Start Tutorials'),
-          const SizedBox(height: 12),
+          AppSpacing.gapMd,
           _buildTutorialItem(
             context,
             'Getting Started',
@@ -46,9 +49,9 @@ class HelpSupportPage extends StatelessWidget {
             Icons.description_rounded,
             Colors.orange,
           ),
-          const SizedBox(height: 32),
+          AppSpacing.gapXxl,
           _buildSectionTitle(context, 'Frequently Asked Questions'),
-          const SizedBox(height: 12),
+          AppSpacing.gapMd,
           _buildFAQCard(context),
           const SizedBox(height: 40),
           _buildContactSupport(context),
@@ -67,7 +70,7 @@ class HelpSupportPage extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(AppSpacing.r24),
         boxShadow: [
           BoxShadow(
             color: AppTheme.primaryColor.withOpacity(0.3),
@@ -80,7 +83,7 @@ class HelpSupportPage extends StatelessWidget {
         children: [
           Icon(Icons.help_center_rounded,
               color: AppTheme.getSurfaceColor(context), size: 48),
-          const SizedBox(height: 16),
+          AppSpacing.gapLg,
           Text(
             'How can we help you today?',
             style: TextStyle(
@@ -88,7 +91,7 @@ class HelpSupportPage extends StatelessWidget {
                 fontSize: 18,
                 fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 8),
+          AppSpacing.gapSm,
           Text(
             'Search through our curated guides and FAQs to master your finances.',
             textAlign: TextAlign.center,
@@ -118,7 +121,7 @@ class HelpSupportPage extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: AppTheme.getSurfaceColor(context),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppSpacing.r16),
         boxShadow: [
           BoxShadow(
               color: AppTheme.getDividerColor(context),
@@ -127,7 +130,7 @@ class HelpSupportPage extends StatelessWidget {
         ],
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        contentPadding: AppSpacing.listItemPadding,
         leading: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
@@ -155,7 +158,7 @@ class HelpSupportPage extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: AppTheme.getSurfaceColor(context),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(AppSpacing.r24),
         boxShadow: [
           BoxShadow(
               color: AppTheme.getDividerColor(context),
@@ -213,7 +216,7 @@ class HelpSupportPage extends StatelessWidget {
               style: TextStyle(
                   color: AppTheme.getTextColor(context, opacity: 0.6),
                   fontSize: 14)),
-          const SizedBox(height: 8),
+          AppSpacing.gapSm,
           TextButton.icon(
             onPressed: () {},
             icon: const Icon(Icons.email_outlined, size: 18),

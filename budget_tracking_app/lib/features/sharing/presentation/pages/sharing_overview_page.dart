@@ -1,9 +1,12 @@
+import '../../../../widgets/ui/app_app_bar.dart';
+import '../../../../widgets/ui/app_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../providers/firestore_sharing_provider.dart';
 import '../../domain/models/share_invitation.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class SharingOverviewPage extends ConsumerStatefulWidget {
   const SharingOverviewPage({super.key});
@@ -30,23 +33,39 @@ class _SharingOverviewPageState extends ConsumerState<SharingOverviewPage> {
 
     return DefaultTabController(
       length: 3,
-      child: Scaffold(
-        backgroundColor: Color(0xFFF5F5F7),
-        appBar: AppBar(
+      child: AppScaffold(
+        withTealHeader: true,
+        backgroundColor: AppTheme.backgroundLight,
+        appBar: AppAppBar(
           title: Text('Sharing',
-              style:
-                  TextStyle(color: AppTheme.getSurfaceColor(context), fontWeight: FontWeight.bold)),
-          backgroundColor: AppTheme.sharingColor,
+              style: TextStyle(
+                  color: AppTheme.getSurfaceColor(context),
+                  fontWeight: FontWeight.bold)),
           centerTitle: true,
           iconTheme: const IconThemeData(color: Colors.white),
-          bottom:  TabBar(
-            indicatorColor: Theme.of(context).colorScheme.onPrimary,
+          bottom: TabBar(
+            indicatorColor: Colors.white,
+            indicatorWeight: 3,
+            dividerColor: Colors.transparent,
             labelColor: Colors.white,
-            unselectedLabelColor: Theme.of(context).colorScheme.onPrimary.withOpacity(0.7),
+            unselectedLabelColor: Colors.white.withOpacity(0.6),
+            labelStyle:
+                const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
             tabs: [
-              Tab(icon: Icon(Icons.inbox_rounded), text: 'Received'),
-              Tab(icon: Icon(Icons.send_rounded), text: 'Sent'),
-              Tab(icon: Icon(Icons.people_rounded), text: 'Active'),
+              Tab(
+                icon: const Icon(Icons.inbox_rounded, size: 20),
+                child:
+                    Text('Received (${invitationsAsync.value?.length ?? 0})'),
+              ),
+              Tab(
+                icon: const Icon(Icons.send_rounded, size: 20),
+                child:
+                    Text('Sent (${sentInvitationsAsync.value?.length ?? 0})'),
+              ),
+              Tab(
+                icon: const Icon(Icons.people_rounded, size: 20),
+                child: Text('Active (${sharesAsync.value?.length ?? 0})'),
+              ),
             ],
           ),
         ),
@@ -60,12 +79,42 @@ class _SharingOverviewPageState extends ConsumerState<SharingOverviewPage> {
         floatingActionButton: FloatingActionButton.extended(
           heroTag: 'sharing_fab',
           onPressed: () => _showInviteDialog(context),
-          label: Text('Send Invite',
+          label: const Text('Send Invite',
               style: TextStyle(fontWeight: FontWeight.bold)),
           icon: const Icon(Icons.person_add_rounded),
           backgroundColor: AppTheme.primaryColor,
           foregroundColor: Colors.white,
         ),
+      ),
+    );
+  }
+
+  Widget _buildHeroStat(
+      BuildContext context, int count, String label, IconData icon) {
+    return Expanded(
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 14, color: Colors.white.withOpacity(0.9)),
+              AppSpacing.gapXs,
+              Text(
+                label,
+                style: TextStyle(
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+          AppSpacing.gapXs,
+          Text(
+            '$count',
+            style: const TextStyle(
+                color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+        ],
       ),
     );
   }
@@ -80,9 +129,8 @@ class _SharingOverviewPageState extends ConsumerState<SharingOverviewPage> {
             Icons.inbox_rounded,
           );
         }
-
         return ListView.builder(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
           itemCount: invitations.length,
           itemBuilder: (context, index) {
             final invitation = invitations[index];
@@ -105,9 +153,8 @@ class _SharingOverviewPageState extends ConsumerState<SharingOverviewPage> {
             Icons.send_rounded,
           );
         }
-
         return ListView.builder(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
           itemCount: sent.length,
           itemBuilder: (context, index) {
             final invitation = sent[index];
@@ -130,9 +177,8 @@ class _SharingOverviewPageState extends ConsumerState<SharingOverviewPage> {
             Icons.people_rounded,
           );
         }
-
         return ListView.builder(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
           itemCount: shares.length,
           itemBuilder: (context, index) {
             final share = shares[index];
@@ -140,78 +186,102 @@ class _SharingOverviewPageState extends ConsumerState<SharingOverviewPage> {
           },
         );
       },
-      loading: () => Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: CircularProgressIndicator()),
       error: (err, _) => Center(child: Text('Error: $err')),
     );
   }
 
   Widget _buildInvitationCard(ShareInvitation invitation) {
     return Container(
-      margin: EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: AppTheme.getSurfaceColor(context),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.getDividerColor(context),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.cardPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 CircleAvatar(
+                  radius: 24,
                   backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
                   child: Text(
                     invitation.ownerName[0].toUpperCase(),
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: AppTheme.primaryColor,
                       fontWeight: FontWeight.bold,
+                      fontSize: 18,
                     ),
                   ),
                 ),
-                SizedBox(width: 12),
+                AppSpacing.gapMd,
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         invitation.ownerName,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
+                          color: AppTheme.textPrimary,
                         ),
                       ),
                       Text(
                         invitation.ownerEmail,
-                        style: TextStyle(color: AppTheme.getTextColor(context, isSecondary: true), fontSize: 12),
+                        style: TextStyle(
+                            color: AppTheme.getTextColor(context,
+                                isSecondary: true),
+                            fontSize: 12),
                       ),
                     ],
                   ),
                 ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Text(
+                    'Pending',
+                    style: TextStyle(
+                      color: AppTheme.primaryColor,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               ],
             ),
-            const SizedBox(height: 12),
+            AppSpacing.gapMd,
             Wrap(
               spacing: 8,
+              runSpacing: 4,
               children: invitation.sharedDataTypes
-                  .map((type) => Chip(
-                        label: Text(
-                          type,
-                          style: TextStyle(fontSize: 11),
+                  .map((type) => Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryColor.withOpacity(0.08),
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                        backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
-                        padding: EdgeInsets.zero,
+                        child: Text(
+                          type,
+                          style: const TextStyle(
+                              fontSize: 11,
+                              color: AppTheme.primaryColor,
+                              fontWeight: FontWeight.w500),
+                        ),
                       ))
                   .toList(),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             Row(
               children: [
                 Expanded(
@@ -221,10 +291,16 @@ class _SharingOverviewPageState extends ConsumerState<SharingOverviewPage> {
                           .read(sharingActionsProvider.notifier)
                           .rejectInvitation(invitation.id);
                     },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppTheme.textSecondary,
+                      side: BorderSide(color: Colors.grey.withOpacity(0.3)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppSpacing.r12)),
+                    ),
                     child: const Text('Decline'),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 10),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
@@ -235,8 +311,12 @@ class _SharingOverviewPageState extends ConsumerState<SharingOverviewPage> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.primaryColor,
                       foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppSpacing.r12)),
                     ),
-                    child: const Text('Accept'),
+                    child: const Text('Accept',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],
@@ -244,215 +324,257 @@ class _SharingOverviewPageState extends ConsumerState<SharingOverviewPage> {
           ],
         ),
       ),
-    );
+    ).animate().fadeIn(duration: 400.ms).slideX(begin: 0.05, end: 0);
   }
 
   Widget _buildSentInvitationCard(ShareInvitation invitation) {
+    final isPending = invitation.status == InvitationStatus.pending;
     return Container(
-      margin: EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: AppTheme.getSurfaceColor(context),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.getDividerColor(context),
-            blurRadius: 10,
-            offset: Offset(0, 4),
-          ),
-        ],
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
       ),
-      child: ListTile(
-        contentPadding: EdgeInsets.all(16),
-        leading: CircleAvatar(
-          backgroundColor: Colors.grey[200],
-          child: Icon(Icons.person, color: AppTheme.getTextColor(context, isSecondary: true)),
-        ),
-        title: Text(
-          invitation.recipientEmail,
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      child: Padding(
+        padding: AppSpacing.cardPadding,
+        child: Row(
           children: [
-            const SizedBox(height: 4),
-            Text('Status: ${invitation.status.name}'),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 4,
-              children: invitation.sharedDataTypes
-                  .map((type) => Chip(
-                        label: Text(type, style: const TextStyle(fontSize: 10)),
-                        backgroundColor: Colors.grey[100],
-                        padding: EdgeInsets.zero,
-                        visualDensity: VisualDensity.compact,
-                      ))
-                  .toList(),
+            CircleAvatar(
+              radius: 24,
+              backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+              child: Icon(Icons.person_rounded,
+                  color: AppTheme.primaryColor, size: 22),
             ),
-          ],
-        ),
-        trailing: invitation.status == InvitationStatus.pending
-            ? IconButton(
-                icon: const Icon(Icons.cancel, color: Colors.red),
+            AppSpacing.gapMd,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    invitation.recipientEmail,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.textPrimary),
+                  ),
+                  AppSpacing.gapXs,
+                  Wrap(
+                    spacing: 4,
+                    runSpacing: 4,
+                    children: invitation.sharedDataTypes
+                        .map((type) => Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: AppTheme.primaryColor.withOpacity(0.08),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(type,
+                                  style: const TextStyle(
+                                      fontSize: 10,
+                                      color: AppTheme.primaryColor,
+                                      fontWeight: FontWeight.w500)),
+                            ))
+                        .toList(),
+                  ),
+                ],
+              ),
+            ),
+            AppSpacing.gapSm,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: isPending
+                    ? Colors.amber.withOpacity(0.1)
+                    : AppTheme.primaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                isPending ? 'Pending' : 'Accepted',
+                style: TextStyle(
+                  color: isPending ? Colors.orange[700] : AppTheme.primaryColor,
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            if (isPending)
+              IconButton(
+                icon: const Icon(Icons.cancel_outlined,
+                    color: AppTheme.dangerColor, size: 20),
                 onPressed: () {
                   ref
                       .read(sharingActionsProvider.notifier)
                       .cancelInvitation(invitation.id);
                 },
-              )
-            : null,
+              ),
+          ],
+        ),
       ),
-    );
+    ).animate().fadeIn(duration: 400.ms).slideX(begin: 0.05, end: 0);
   }
 
   Widget _buildShareCard(share) {
+    final name = share.ownerEmail.split('@').first;
     return Container(
-      margin: EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: AppTheme.getSurfaceColor(context),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.getDividerColor(context),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.all(16),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         leading: CircleAvatar(
+          radius: 24,
           backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
           child: Text(
-            share.ownerEmail[0].toUpperCase(),
-            style: TextStyle(
+            name[0].toUpperCase(),
+            style: const TextStyle(
               color: AppTheme.primaryColor,
               fontWeight: FontWeight.bold,
+              fontSize: 18,
             ),
           ),
         ),
         title: Text(
+          name,
+          style: const TextStyle(
+              fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
+        ),
+        subtitle: Text(
           share.ownerEmail,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontSize: 12,
+              color: AppTheme.getTextColor(context, isSecondary: true)),
         ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 4,
-              children: share.dataTypes
-                  .map<Widget>((type) => Chip(
-                        label: Text(type, style: const TextStyle(fontSize: 10)),
-                        backgroundColor: Colors.green[50],
-                        padding: EdgeInsets.zero,
-                        visualDensity: VisualDensity.compact,
-                      ))
-                  .toList(),
-            ),
-          ],
+        trailing: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: AppTheme.primaryColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.check_circle, color: AppTheme.primaryColor, size: 14),
+              SizedBox(width: 4),
+              Text(
+                'Active',
+                style: TextStyle(
+                  color: AppTheme.primaryColor,
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
         ),
-        trailing: const Icon(Icons.check_circle, color: Colors.green),
       ),
-    );
+    ).animate().fadeIn(duration: 400.ms).slideX(begin: 0.05, end: 0);
   }
 
   Widget _buildEmptyState(String title, String message, IconData icon) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 80, color: AppTheme.getTextColor(context, isSecondary: true, opacity: 0.5)),
-          SizedBox(height: 16),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+      child: Padding(
+        padding: const EdgeInsets.all(40),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: AppTheme.primaryColor.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, size: 40, color: AppTheme.primaryColor),
             ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            message,
-            style: TextStyle(color: AppTheme.getTextColor(context, isSecondary: true)),
-            textAlign: TextAlign.center,
-          ),
-        ],
+            const SizedBox(height: 20),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.textPrimary,
+              ),
+            ),
+            AppSpacing.gapSm,
+            Text(
+              message,
+              style: TextStyle(
+                  color: AppTheme.getTextColor(context, isSecondary: true)),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     ).animate().fadeIn();
   }
 
   void _showInviteDialog(BuildContext context) {
-    final selectedDataTypes = <String>{}; // Local state for dialog
+    final selectedDataTypes = <String>{};
 
     showDialog(
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Send Invitation'),
+          backgroundColor: Colors.white,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSpacing.r24)),
+          title: const Text('Send Invitation',
+              style: TextStyle(fontWeight: FontWeight.bold)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextField(
                 controller: _emailController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Email Address',
                   hintText: 'friend@example.com',
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(AppSpacing.r12)),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppSpacing.r12),
+                    borderSide: const BorderSide(
+                        color: AppTheme.primaryColor, width: 2),
+                  ),
+                  prefixIcon: const Icon(Icons.email_outlined,
+                      color: AppTheme.primaryColor),
                 ),
                 keyboardType: TextInputType.emailAddress,
               ),
-              const SizedBox(height: 16),
+              AppSpacing.gapLg,
               const Text(
                 'Select data to share:',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
               ),
-              const SizedBox(height: 8),
-              CheckboxListTile(
-                title: const Text('Expenses'),
-                value: selectedDataTypes.contains('expenses'),
-                onChanged: (checked) {
-                  setDialogState(() {
-                    if (checked == true) {
-                      selectedDataTypes.add('expenses');
-                    } else {
-                      selectedDataTypes.remove('expenses');
-                    }
-                  });
-                },
-                dense: true,
-                contentPadding: EdgeInsets.zero,
-              ),
-              CheckboxListTile(
-                title: const Text('Cash Book'),
-                value: selectedDataTypes.contains('cash_book'),
-                onChanged: (checked) {
-                  setDialogState(() {
-                    if (checked == true) {
-                      selectedDataTypes.add('cash_book');
-                    } else {
-                      selectedDataTypes.remove('cash_book');
-                    }
-                  });
-                },
-                dense: true,
-                contentPadding: EdgeInsets.zero,
-              ),
-              CheckboxListTile(
-                title: const Text('Budgets'),
-                value: selectedDataTypes.contains('budgets'),
-                onChanged: (checked) {
-                  setDialogState(() {
-                    if (checked == true) {
-                      selectedDataTypes.add('budgets');
-                    } else {
-                      selectedDataTypes.remove('budgets');
-                    }
-                  });
-                },
-                dense: true,
-                contentPadding: EdgeInsets.zero,
-              ),
+              AppSpacing.gapSm,
+              for (final type in ['expenses', 'cash_book', 'budgets'])
+                CheckboxListTile(
+                  title: Text(
+                    type == 'cash_book'
+                        ? 'Cash Book'
+                        : '${type[0].toUpperCase()}${type.substring(1)}',
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                  value: selectedDataTypes.contains(type),
+                  activeColor: AppTheme.primaryColor,
+                  onChanged: (checked) {
+                    setDialogState(() {
+                      if (checked == true) {
+                        selectedDataTypes.add(type);
+                      } else {
+                        selectedDataTypes.remove(type);
+                      }
+                    });
+                  },
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                ),
             ],
           ),
           actions: [
@@ -461,7 +583,8 @@ class _SharingOverviewPageState extends ConsumerState<SharingOverviewPage> {
                 Navigator.pop(dialogContext);
                 _emailController.clear();
               },
-              child: const Text('Cancel'),
+              child: const Text('Cancel',
+                  style: TextStyle(color: AppTheme.textSecondary)),
             ),
             ElevatedButton(
               onPressed: selectedDataTypes.isEmpty
@@ -479,8 +602,12 @@ class _SharingOverviewPageState extends ConsumerState<SharingOverviewPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryColor,
                 foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppSpacing.r12)),
               ),
-              child: const Text('Send'),
+              child: const Text('Send',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
             ),
           ],
         ),

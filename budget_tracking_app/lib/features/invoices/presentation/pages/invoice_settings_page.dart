@@ -1,8 +1,11 @@
+import '../../../../widgets/ui/app_app_bar.dart';
+import '../../../../widgets/ui/app_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../providers/invoice_provider.dart';
 import '../../domain/models/invoice_settings.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class InvoiceSettingsPage extends ConsumerStatefulWidget {
   const InvoiceSettingsPage({super.key});
@@ -81,7 +84,13 @@ class _InvoiceSettingsPageState extends ConsumerState<InvoiceSettingsPage> {
 
       ref.read(invoiceSettingsProvider.notifier).updateSettings(newSettings);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Settings saved successfully!')),
+        SnackBar(
+          content: const Text('Settings saved successfully!'),
+          backgroundColor: AppTheme.successColor,
+          behavior: SnackBarBehavior.floating,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
       );
       Navigator.pop(context);
     }
@@ -89,14 +98,14 @@ class _InvoiceSettingsPageState extends ConsumerState<InvoiceSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F7),
-      appBar: AppBar(
+    return AppScaffold(
+      withTealHeader: true,
+      backgroundColor: AppTheme.backgroundLight,
+      appBar: const AppAppBar(
         title: Text('Invoice Settings',
-            style: TextStyle(color: AppTheme.getSurfaceColor(context), fontWeight: FontWeight.bold)),
-        backgroundColor: AppTheme.invoiceColor,
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -119,7 +128,7 @@ class _InvoiceSettingsPageState extends ConsumerState<InvoiceSettingsPage> {
                     'Phone', _companyPhoneController, Icons.phone_rounded,
                     keyboardType: TextInputType.phone),
               ]),
-              const SizedBox(height: 32),
+              AppSpacing.gapXxl,
               _buildSectionTitle('TAX & RATES'),
               _buildCard([
                 _buildTextField('Default VAT / Tax Rate (%)',
@@ -129,7 +138,7 @@ class _InvoiceSettingsPageState extends ConsumerState<InvoiceSettingsPage> {
                     Icons.timer_rounded,
                     keyboardType: TextInputType.number),
               ]),
-              const SizedBox(height: 32),
+              AppSpacing.gapXxl,
               _buildSectionTitle('BANK INFORMATION'),
               _buildCard([
                 _buildTextField('Bank Name', _bankNameController,
@@ -145,11 +154,11 @@ class _InvoiceSettingsPageState extends ConsumerState<InvoiceSettingsPage> {
               ElevatedButton(
                 onPressed: _save,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.invoiceColor,
+                  backgroundColor: AppTheme.primaryColor,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 18),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
+                      borderRadius: BorderRadius.circular(AppSpacing.r16)),
                   elevation: 0,
                 ),
                 child: const Text('Save Settings',
@@ -169,10 +178,10 @@ class _InvoiceSettingsPageState extends ConsumerState<InvoiceSettingsPage> {
       padding: const EdgeInsets.only(left: 4, bottom: 12),
       child: Text(
         title,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w900,
-          color: AppTheme.getTextColor(context, opacity: 0.4),
+          color: AppTheme.textSecondary,
           letterSpacing: 1.2,
         ),
       ),
@@ -182,17 +191,18 @@ class _InvoiceSettingsPageState extends ConsumerState<InvoiceSettingsPage> {
   Widget _buildCard(List<Widget> children) {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.getSurfaceColor(context),
-        borderRadius: BorderRadius.circular(24),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppSpacing.r24),
+        border: Border.all(color: Colors.grey.withOpacity(0.1)),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.getDividerColor(context),
+            color: Colors.black.withOpacity(0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
       ),
-      padding: const EdgeInsets.all(20),
+      padding: AppSpacing.cardPadding,
       child: Column(children: children),
     );
   }
@@ -206,21 +216,25 @@ class _InvoiceSettingsPageState extends ConsumerState<InvoiceSettingsPage> {
         controller: controller,
         keyboardType: keyboardType,
         maxLines: maxLines,
-        style: TextStyle(fontWeight: FontWeight.bold),
+        style: const TextStyle(fontWeight: FontWeight.bold),
         decoration: InputDecoration(
           labelText: label,
-          prefixIcon: Icon(icon, color: AppTheme.invoiceColor.withOpacity(0.7)),
+          labelStyle: const TextStyle(color: AppTheme.textSecondary),
+          prefixIcon: Icon(icon, color: AppTheme.primaryColor),
+          filled: true,
+          fillColor: AppTheme.backgroundLight.withOpacity(0.5),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppTheme.getBorderColor(context)),
+            borderRadius: BorderRadius.circular(AppSpacing.r16),
+            borderSide: BorderSide(color: Colors.grey.withOpacity(0.2)),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppTheme.getBorderColor(context)),
+            borderRadius: BorderRadius.circular(AppSpacing.r16),
+            borderSide: BorderSide(color: Colors.grey.withOpacity(0.2)),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppTheme.invoiceColor),
+            borderRadius: BorderRadius.circular(AppSpacing.r16),
+            borderSide:
+                const BorderSide(color: AppTheme.primaryColor, width: 2),
           ),
         ),
       ),

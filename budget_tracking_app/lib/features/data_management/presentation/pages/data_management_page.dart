@@ -1,8 +1,11 @@
+import '../../../../widgets/ui/app_app_bar.dart';
+import '../../../../widgets/ui/app_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../providers/data_management_provider.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class DataManagementPage extends ConsumerWidget {
   const DataManagementPage({super.key});
@@ -11,9 +14,9 @@ class DataManagementPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(dataManagementProvider);
 
-    return Scaffold(
+    return AppScaffold(
       backgroundColor: const Color(0xFFF5F5F7),
-      appBar: AppBar(
+      appBar: AppAppBar(
         title: Text('Data & Tools',
             style: TextStyle(color: AppTheme.getSurfaceColor(context), fontWeight: FontWeight.bold)),
         backgroundColor: AppTheme.primaryColor,
@@ -24,9 +27,9 @@ class DataManagementPage extends ConsumerWidget {
         padding: const EdgeInsets.all(24),
         children: [
           _buildInfoCard(context),
-          const SizedBox(height: 32),
+          AppSpacing.gapXxl,
           _buildSectionTitle(context, 'Backup & Export'),
-          const SizedBox(height: 16),
+          AppSpacing.gapLg,
           _buildFeatureCard(
             context,
             title: 'Export to Excel',
@@ -35,7 +38,7 @@ class DataManagementPage extends ConsumerWidget {
             color: AppTheme.successColor,
             onTap: () => notifier.exportToExcel(),
           ).animate().fadeIn(delay: 100.ms).slideX(begin: 0.1, end: 0),
-          const SizedBox(height: 16),
+          AppSpacing.gapLg,
           _buildFeatureCard(
             context,
             title: 'Backup to CSV',
@@ -44,9 +47,9 @@ class DataManagementPage extends ConsumerWidget {
             color: AppTheme.primaryColor,
             onTap: () => notifier.exportAllToCsv(),
           ).animate().fadeIn(delay: 200.ms).slideX(begin: 0.1, end: 0),
-          const SizedBox(height: 32),
+          AppSpacing.gapXxl,
           _buildSectionTitle(context, 'Reports & Printing'),
-          const SizedBox(height: 16),
+          AppSpacing.gapLg,
           _buildFeatureCard(
             context,
             title: 'Financial Summary',
@@ -79,9 +82,9 @@ class DataManagementPage extends ConsumerWidget {
               }
             },
           ).animate().fadeIn(delay: 300.ms).slideX(begin: 0.1, end: 0),
-          const SizedBox(height: 32),
+          AppSpacing.gapXxl,
           _buildSectionTitle(context, 'Data Safety'),
-          const SizedBox(height: 16),
+          AppSpacing.gapLg,
           _buildFeatureCard(
             context,
             title: 'Import Data',
@@ -130,7 +133,7 @@ class DataManagementPage extends ConsumerWidget {
 
   Widget _buildInfoCard(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: AppSpacing.cardPadding,
       decoration: BoxDecoration(
         color: AppTheme.getSurfaceColor(context),
         borderRadius: BorderRadius.circular(20),
@@ -146,7 +149,7 @@ class DataManagementPage extends ConsumerWidget {
         children: [
           Icon(Icons.shield_outlined,
               color: AppTheme.primaryColor.withOpacity(0.8), size: 28),
-          const SizedBox(width: 16),
+          AppSpacing.gapLg,
           Expanded(
             child: Text(
               'Your financial data is stored locally on this device. Create backups strictly for your own records.',
@@ -170,7 +173,7 @@ class DataManagementPage extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         color: AppTheme.getSurfaceColor(context),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(AppSpacing.r24),
         boxShadow: [
           BoxShadow(
             color: AppTheme.getDividerColor(context),
@@ -181,16 +184,16 @@ class DataManagementPage extends ConsumerWidget {
       ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(AppSpacing.r24),
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: AppSpacing.cardPadding,
           child: Row(
             children: [
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(AppSpacing.r16),
                   border: Border.all(color: color.withOpacity(0.2)),
                 ),
                 child: Icon(icon, color: color, size: 24),
@@ -207,7 +210,7 @@ class DataManagementPage extends ConsumerWidget {
                           fontSize: 16,
                           color: AppTheme.getTextColor(context)),
                     ),
-                    const SizedBox(height: 4),
+                    AppSpacing.gapXs,
                     Text(
                       subtitle,
                       style:
@@ -229,13 +232,13 @@ class DataManagementPage extends ConsumerWidget {
     return Column(
       children: [
         const Divider(color: Colors.white10),
-        const SizedBox(height: 24),
+        AppSpacing.gapXl,
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.security_rounded,
                 size: 14, color: Colors.white.withOpacity(0.3)),
-            const SizedBox(width: 8),
+            AppSpacing.gapSm,
             Text(
               'Secure Local Storage • Offline First',
               textAlign: TextAlign.center,

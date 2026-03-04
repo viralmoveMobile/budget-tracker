@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
+import '../../../../widgets/ui/app_app_bar.dart';
+import '../../../../widgets/ui/app_scaffold.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../providers/holiday_provider.dart';
 import '../../domain/models/holiday.dart';
 import 'holiday_detail_page.dart';
 import '../widgets/add_holiday_sheet.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class HolidayListPage extends ConsumerWidget {
   const HolidayListPage({super.key});
@@ -15,12 +18,15 @@ class HolidayListPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final holidaysAsync = ref.watch(holidayListProvider);
 
-    return Scaffold(
-      backgroundColor: Color(0xFFF5F5F7),
-      appBar: AppBar(
+    return AppScaffold(
+      backgroundColor: AppTheme.getBackgroundColor(context),
+      appBar: AppAppBar(
         title: Text('Holiday Planner',
-            style: TextStyle(color: AppTheme.getSurfaceColor(context), fontWeight: FontWeight.bold)),
-        backgroundColor: AppTheme.holidayColor,
+            style: TextStyle(
+                color: AppTheme.getSurfaceColor(context),
+                fontWeight: FontWeight.bold,
+                letterSpacing: -0.5)),
+        backgroundColor: AppTheme.primaryColor,
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -31,57 +37,88 @@ class HolidayListPage extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.beach_access_rounded,
-                      size: 100, color: AppTheme.getTextColor(context, opacity: 0.15)),
-                  SizedBox(height: 24),
-                  Text(
-                    'No holidays planned yet',
-                    style: TextStyle(
-                        color: AppTheme.getTextColor(context, opacity: 0.4),
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryColor.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.flight_takeoff_rounded,
+                        size: 80, color: AppTheme.primaryColor),
                   ),
-                  const SizedBox(height: 32),
+                  AppSpacing.gapXl,
+                  Text(
+                    'No trips planned yet',
+                    style: TextStyle(
+                        color: AppTheme.getTextColor(context),
+                        fontSize: 22,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -0.5),
+                  ),
+                  AppSpacing.gapSm,
+                  Text(
+                    'Start tracking your holiday budget today',
+                    style: TextStyle(
+                        color: AppTheme.getTextColor(context, opacity: 0.5),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(height: 40),
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.primaryColor,
                       foregroundColor: Colors.white,
+                      elevation: 0,
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 14),
+                          horizontal: 28, vertical: 16),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16)),
+                          borderRadius: BorderRadius.circular(20)),
                     ),
                     onPressed: () => _showAddHoliday(context),
                     icon: const Icon(Icons.add_rounded),
                     label: const Text('Plan New Trip',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
                   ),
                 ],
-              ).animate().fadeIn(),
+              )
+                  .animate()
+                  .fadeIn(duration: 400.ms)
+                  .slideY(begin: 0.1, end: 0, curve: Curves.easeOutQuad),
             );
           }
 
           return ListView.builder(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
             itemCount: holidays.length,
             itemBuilder: (context, index) {
               final holiday = holidays[index];
-              return _HolidayCard(holiday: holiday);
+              return _HolidayCard(
+                  holiday:
+                      holiday); // `index` parameter was not added to _HolidayCard as it's not defined in the original code.
             },
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, st) => Center(child: Text('Error: $err')),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        heroTag: 'holiday_list_fab',
-        onPressed: () => _showAddHoliday(context),
-        icon: const Icon(Icons.add_rounded),
-        label: const Text('Plan Holiday',
-            style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: AppTheme.primaryColor,
-        foregroundColor: Colors.white,
-      ).animate().scale(delay: 400.ms),
+      floatingActionButton: holidaysAsync.maybeWhen(
+        data: (holidays) => holidays.isNotEmpty
+            ? FloatingActionButton.extended(
+                heroTag: 'holiday_list_fab',
+                onPressed: () => _showAddHoliday(context),
+                icon: const Icon(Icons.add_rounded),
+                label: const Text('Plan Holiday',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                backgroundColor: AppTheme.primaryColor,
+                foregroundColor: Colors.white,
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
+              ).animate().scale(delay: 200.ms)
+            : null,
+        orElse: () => null,
+      ),
     );
   }
 
@@ -113,20 +150,23 @@ class _HolidayCard extends ConsumerWidget {
         final isOverspent = totalSpent > holiday.totalBudget;
 
         return Container(
-          margin: EdgeInsets.only(bottom: 16),
+          margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
             color: AppTheme.getSurfaceColor(context),
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(AppSpacing.r24),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.holidayColor.withOpacity(0.15),
+                color: Colors.black.withOpacity(0.04),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
             ],
+            border: Border.all(
+                color: AppTheme.getBorderColor(context, opacity: 0.2),
+                width: 1.5),
           ),
           child: InkWell(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(AppSpacing.r24),
             onTap: () {
               Navigator.push(
                 context,
@@ -147,6 +187,7 @@ class _HolidayCard extends ConsumerWidget {
                         child: Text(
                           holiday.name,
                           style: TextStyle(
+                            color: AppTheme.getTextColor(context),
                             fontSize: 20,
                             fontWeight: FontWeight.w900,
                             letterSpacing: -0.5,
@@ -180,7 +221,8 @@ class _HolidayCard extends ConsumerWidget {
                   Row(
                     children: [
                       Icon(Icons.calendar_today_rounded,
-                          size: 14, color: AppTheme.getTextColor(context, opacity: 0.5)),
+                          size: 14,
+                          color: AppTheme.getTextColor(context, opacity: 0.5)),
                       SizedBox(width: 8),
                       Text(
                         '${DateFormat('MMM d').format(holiday.startDate)} - ${DateFormat('MMM d, y').format(holiday.endDate)}',
@@ -201,7 +243,9 @@ class _HolidayCard extends ConsumerWidget {
                             TextSpan(
                                 text: 'Spent: ',
                                 style: TextStyle(
-                                    color: AppTheme.getTextColor(context, opacity: 0.5), fontSize: 12)),
+                                    color: AppTheme.getTextColor(context,
+                                        opacity: 0.5),
+                                    fontSize: 12)),
                             TextSpan(
                               text: '\$${totalSpent.toStringAsFixed(0)}',
                               style: TextStyle(
@@ -218,14 +262,17 @@ class _HolidayCard extends ConsumerWidget {
                             TextSpan(
                                 text: 'Limit: ',
                                 style: TextStyle(
-                                    color: AppTheme.getTextColor(context, opacity: 0.5), fontSize: 12)),
+                                    color: AppTheme.getTextColor(context,
+                                        opacity: 0.5),
+                                    fontSize: 12)),
                             TextSpan(
                               text:
                                   '\$${holiday.totalBudget.toStringAsFixed(0)}',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
-                                  color: AppTheme.getTextColor(context, opacity: 0.6)),
+                                  color: AppTheme.getTextColor(context,
+                                      opacity: 0.6)),
                             ),
                           ],
                         ),
@@ -255,7 +302,7 @@ class _HolidayCard extends ConsumerWidget {
                                     : AppTheme.primaryColor,
                                 (isOverspent
                                         ? AppTheme.dangerColor
-                                        : AppTheme.infoColor)
+                                        : AppTheme.primaryColor)
                                     .withOpacity(0.6),
                               ],
                             ),

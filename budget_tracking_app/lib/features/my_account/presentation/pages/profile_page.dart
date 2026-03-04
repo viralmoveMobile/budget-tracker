@@ -1,3 +1,5 @@
+import '../../../../widgets/ui/app_app_bar.dart';
+import '../../../../widgets/ui/app_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -68,9 +70,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     final profile = ref.watch(profileProvider);
     final userAsync = ref.watch(authStateProvider);
 
-    return Scaffold(
+    return AppScaffold(
       backgroundColor: AppTheme.getBackgroundColor(context),
-      appBar: AppBar(
+      appBar: AppAppBar(
         title: Text('My Account'),
         elevation: 0,
       ),

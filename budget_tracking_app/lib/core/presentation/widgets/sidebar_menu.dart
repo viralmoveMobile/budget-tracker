@@ -14,6 +14,7 @@ import '../../../features/invoices/presentation/pages/invoice_list_page.dart';
 import '../../../features/settings/presentation/pages/settings_overview_page.dart';
 import '../../../features/auth/presentation/providers/auth_provider.dart';
 import '../../../features/my_account/presentation/pages/profile_page.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class SidebarMenu extends ConsumerWidget {
   const SidebarMenu({super.key});
@@ -214,7 +215,7 @@ class SidebarMenu extends ConsumerWidget {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    AppSpacing.gapXs,
                     Text(
                       displayName,
                       style: const TextStyle(

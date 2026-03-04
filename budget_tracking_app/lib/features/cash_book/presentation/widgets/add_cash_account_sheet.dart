@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import '../providers/cash_book_provider.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/models/cash_account.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class AddCashAccountSheet extends ConsumerStatefulWidget {
   const AddCashAccountSheet({super.key});
@@ -84,7 +85,7 @@ class _AddCashAccountSheetState extends ConsumerState<AddCashAccountSheet> {
                     ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 24),
+              AppSpacing.gapXl,
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(
@@ -96,7 +97,7 @@ class _AddCashAccountSheetState extends ConsumerState<AddCashAccountSheet> {
                 validator: (val) =>
                     val == null || val.isEmpty ? 'Required' : null,
               ),
-              const SizedBox(height: 16),
+              AppSpacing.gapLg,
               TextFormField(
                 controller: _descController,
                 decoration: const InputDecoration(
@@ -105,7 +106,7 @@ class _AddCashAccountSheetState extends ConsumerState<AddCashAccountSheet> {
                   border: OutlineInputBorder(),
                 ),
               ),
-              const SizedBox(height: 24),
+              AppSpacing.gapXl,
               ElevatedButton(
                 onPressed: _isLoading ? null : _submit,
                 style: ElevatedButton.styleFrom(
@@ -113,7 +114,7 @@ class _AddCashAccountSheetState extends ConsumerState<AddCashAccountSheet> {
                   backgroundColor: AppTheme.cashBookColor,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(AppSpacing.r12),
                   ),
                 ),
                 child: _isLoading
@@ -126,7 +127,7 @@ class _AddCashAccountSheetState extends ConsumerState<AddCashAccountSheet> {
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16)),
               ),
-              const SizedBox(height: 24),
+              AppSpacing.gapXl,
             ],
           ),
         ),

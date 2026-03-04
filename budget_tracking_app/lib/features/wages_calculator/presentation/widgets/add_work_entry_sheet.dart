@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../domain/wage_models.dart';
 import '../providers/wage_provider.dart';
 import '../../../../core/theme/app_theme.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class AddWorkEntrySheet extends ConsumerStatefulWidget {
   final String jobId;
@@ -90,7 +91,7 @@ class _AddWorkEntrySheetState extends ConsumerState<AddWorkEntrySheet> {
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
+            AppSpacing.gapXl,
             Row(
               children: [
                 Expanded(
@@ -108,7 +109,7 @@ class _AddWorkEntrySheetState extends ConsumerState<AddWorkEntrySheet> {
                         val == null || val.isEmpty ? 'Required' : null,
                   ),
                 ),
-                const SizedBox(width: 16),
+                AppSpacing.gapLg,
                 Expanded(
                   child: TextFormField(
                     controller: _otHoursController,
@@ -123,7 +124,7 @@ class _AddWorkEntrySheetState extends ConsumerState<AddWorkEntrySheet> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            AppSpacing.gapLg,
             TextFormField(
               controller: _notesController,
               decoration: const InputDecoration(
@@ -133,7 +134,7 @@ class _AddWorkEntrySheetState extends ConsumerState<AddWorkEntrySheet> {
               ),
               maxLines: 2,
             ),
-            const SizedBox(height: 24),
+            AppSpacing.gapXl,
             Row(
               children: [
                 if (widget.entry != null)
@@ -157,7 +158,7 @@ class _AddWorkEntrySheetState extends ConsumerState<AddWorkEntrySheet> {
                       backgroundColor: AppTheme.wagesColor,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                          borderRadius: BorderRadius.circular(AppSpacing.r12)),
                     ),
                     child: const Text('Save Entry',
                         style: TextStyle(
@@ -166,7 +167,7 @@ class _AddWorkEntrySheetState extends ConsumerState<AddWorkEntrySheet> {
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            AppSpacing.gapXl,
           ],
         ),
       ),

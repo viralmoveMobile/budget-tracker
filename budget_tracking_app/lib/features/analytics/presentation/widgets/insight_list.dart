@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class InsightList extends StatelessWidget {
   final List<String> insights;
@@ -30,7 +31,7 @@ class InsightList extends StatelessWidget {
                   .withOpacity(0.3),
               elevation: 0,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(AppSpacing.r12)),
               child: ListTile(
                 leading:
                     const Icon(Icons.lightbulb_outline, color: Colors.orange),

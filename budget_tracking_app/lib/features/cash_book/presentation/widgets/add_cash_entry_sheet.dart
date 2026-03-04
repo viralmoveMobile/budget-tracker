@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import '../providers/cash_book_provider.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/models/cash_book_entry.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class AddCashEntrySheet extends ConsumerStatefulWidget {
   const AddCashEntrySheet({super.key});
@@ -92,7 +93,7 @@ class _AddCashEntrySheetState extends ConsumerState<AddCashEntrySheet> {
                     ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 24),
+              AppSpacing.gapXl,
               SegmentedButton<CashBookEntryType>(
                 segments: const [
                   ButtonSegment(
@@ -111,7 +112,7 @@ class _AddCashEntrySheetState extends ConsumerState<AddCashEntrySheet> {
                   setState(() => _type = val.first);
                 },
               ),
-              const SizedBox(height: 24),
+              AppSpacing.gapXl,
               TextFormField(
                 controller: _amountController,
                 decoration: const InputDecoration(
@@ -128,7 +129,7 @@ class _AddCashEntrySheetState extends ConsumerState<AddCashEntrySheet> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              AppSpacing.gapLg,
               TextFormField(
                 controller: _descriptionController,
                 decoration: const InputDecoration(
@@ -139,7 +140,7 @@ class _AddCashEntrySheetState extends ConsumerState<AddCashEntrySheet> {
                 validator: (val) =>
                     val == null || val.isEmpty ? 'Required' : null,
               ),
-              const SizedBox(height: 16),
+              AppSpacing.gapLg,
               TextFormField(
                 controller: _categoryController,
                 decoration: const InputDecoration(
@@ -150,7 +151,7 @@ class _AddCashEntrySheetState extends ConsumerState<AddCashEntrySheet> {
                 validator: (val) =>
                     val == null || val.isEmpty ? 'Required' : null,
               ),
-              const SizedBox(height: 24),
+              AppSpacing.gapXl,
               ElevatedButton(
                 onPressed: _isLoading ? null : _submit,
                 style: ElevatedButton.styleFrom(
@@ -158,7 +159,7 @@ class _AddCashEntrySheetState extends ConsumerState<AddCashEntrySheet> {
                   backgroundColor: AppTheme.primaryColor,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(AppSpacing.r12),
                   ),
                 ),
                 child: _isLoading
@@ -171,7 +172,7 @@ class _AddCashEntrySheetState extends ConsumerState<AddCashEntrySheet> {
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16)),
               ),
-              const SizedBox(height: 16),
+              AppSpacing.gapLg,
             ],
           ),
         ),

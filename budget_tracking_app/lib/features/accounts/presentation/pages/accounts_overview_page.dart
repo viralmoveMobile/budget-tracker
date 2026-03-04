@@ -1,3 +1,5 @@
+import '../../../../widgets/ui/app_app_bar.dart';
+import '../../../../widgets/ui/app_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -9,6 +11,8 @@ import '../widgets/add_account_sheet.dart';
 import '../pages/account_details_page.dart';
 import '../../data/models/account.dart';
 import '../../../expenses/presentation/providers/expense_provider.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
+import 'package:budget_tracking_app/core/utils/currency_formatter.dart';
 
 class AccountsOverviewPage extends ConsumerWidget {
   const AccountsOverviewPage({super.key});
@@ -18,10 +22,10 @@ class AccountsOverviewPage extends ConsumerWidget {
     final accountsAsync = ref.watch(accountsProvider);
     final profile = ref.watch(profileProvider);
 
-    return Scaffold(
-      backgroundColor: Color(0xFFF5F5F7),
-      appBar: AppBar(
-        backgroundColor: AppTheme.accountsColor,
+    return AppScaffold(
+      withTealHeader: true,
+      backgroundColor: AppTheme.backgroundLight,
+      appBar: AppAppBar(
         title: Text('Expense Accounts',
             style: TextStyle(
                 color: AppTheme.getSurfaceColor(context),
@@ -44,7 +48,7 @@ class AccountsOverviewPage extends ConsumerWidget {
               await ref.read(expensesProvider.notifier).loadExpenses();
             },
             child: ListView.builder(
-              padding: const EdgeInsets.all(20),
+              padding: AppSpacing.cardPadding,
               itemCount: accounts.length,
               itemBuilder: (context, index) {
                 final account = accounts[index];
@@ -83,17 +87,18 @@ class AccountsOverviewPage extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         color: AppTheme.getSurfaceColor(context),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(AppSpacing.r24),
+        border: Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.accountsColor.withOpacity(0.1),
+            color: AppTheme.primaryColor.withOpacity(0.06),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
         ],
       ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(AppSpacing.r24),
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
@@ -106,13 +111,13 @@ class AccountsOverviewPage extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: account.type.color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(16),
-                  border:
-                      Border.all(color: account.type.color.withOpacity(0.2)),
+                  color: AppTheme.primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppSpacing.r16),
+                  border: Border.all(
+                      color: AppTheme.primaryColor.withOpacity(0.15)),
                 ),
                 child: Icon(account.type.icon,
-                    color: account.type.color, size: 24),
+                    color: AppTheme.primaryColor, size: 24),
               ),
               const SizedBox(width: 20),
               Expanded(
@@ -139,13 +144,11 @@ class AccountsOverviewPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    NumberFormat.simpleCurrency(
-                            name: currency, decimalDigits: 0)
-                        .format(totalSpent),
+                    CurrencyFormatter.format(totalSpent, currency),
                     style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w900,
-                      color: AppTheme.accountsColor,
+                      color: AppTheme.primaryColor,
                       letterSpacing: -1,
                     ),
                   )
@@ -174,7 +177,7 @@ class AccountsOverviewPage extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.account_balance_wallet_rounded,
-              size: 100, color: AppTheme.getTextColor(context, opacity: 0.15)),
+              size: 100, color: AppTheme.primaryColor.withOpacity(0.5)),
           SizedBox(height: 24),
           Text(
             'No accounts detected',
@@ -183,14 +186,14 @@ class AccountsOverviewPage extends ConsumerWidget {
                 fontWeight: FontWeight.bold,
                 color: AppTheme.getTextColor(context, opacity: 0.4)),
           ),
-          const SizedBox(height: 32),
+          AppSpacing.gapXxl,
           ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryColor,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16)),
+                  borderRadius: BorderRadius.circular(AppSpacing.r16)),
             ),
             onPressed: () => _showAddAccountSheet(context),
             icon: const Icon(Icons.add_rounded),

@@ -1,3 +1,5 @@
+import '../../../../widgets/ui/app_app_bar.dart';
+import '../../../../widgets/ui/app_scaffold.dart';
 import 'package:budget_tracking_app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import '../../../../features/wages_calculator/presentation/pages/wages_calculator_page.dart';
@@ -7,6 +9,7 @@ import '../../../../features/cash_book/presentation/pages/cash_book_page.dart';
 import '../../../../features/sharing/presentation/pages/sharing_overview_page.dart';
 import '../../../../features/invoices/presentation/pages/invoice_list_page.dart';
 import '../../../../features/data_management/presentation/pages/data_management_page.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class MoreFeaturesPage extends StatelessWidget {
   const MoreFeaturesPage({super.key});
@@ -58,10 +61,10 @@ class MoreFeaturesPage extends StatelessWidget {
       ),
     ];
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('More Features')),
+    return AppScaffold(
+      appBar: AppAppBar(title: const Text('More Features')),
       body: GridView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.cardPadding,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           crossAxisSpacing: 16,
@@ -78,18 +81,18 @@ class MoreFeaturesPage extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => item.page),
               );
             },
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(AppSpacing.r24),
             child: Container(
               decoration: BoxDecoration(
                 color: item.color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(AppSpacing.r24),
                 border: Border.all(color: item.color.withOpacity(0.2)),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(item.icon, size: 32, color: item.color),
-                  const SizedBox(height: 12),
+                  AppSpacing.gapMd,
                   Text(
                     item.title,
                     style: TextStyle(

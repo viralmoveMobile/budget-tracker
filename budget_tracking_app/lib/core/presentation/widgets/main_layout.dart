@@ -1,3 +1,5 @@
+import '../../../widgets/ui/app_app_bar.dart';
+import '../../../widgets/ui/app_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'sidebar_menu.dart';
 import 'top_header.dart';
@@ -18,7 +20,7 @@ class MainLayout extends StatelessWidget {
     // We use a GlobalKey to control the Scaffold drawer from the custom header
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-    return Scaffold(
+    return AppScaffold(
       key: scaffoldKey,
       backgroundColor: AppTheme.getBackgroundColor(context),
       drawer: const SidebarMenu(),

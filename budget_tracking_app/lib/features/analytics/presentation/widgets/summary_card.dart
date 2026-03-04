@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
 
 class SummaryCard extends StatelessWidget {
   final String title;
@@ -19,13 +20,13 @@ class SummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSpacing.r16)),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: AppSpacing.cardPadding,
         child: Column(
           children: [
             Icon(icon, color: color, size: 28),
-            const SizedBox(height: 8),
+            AppSpacing.gapSm,
             Text(
               title,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -33,7 +34,7 @@ class SummaryCard extends StatelessWidget {
                     color: Colors.grey[600],
                   ),
             ),
-            const SizedBox(height: 4),
+            AppSpacing.gapXs,
             FittedBox(
               child: Text(
                 '\$${amount.toStringAsFixed(2)}',

@@ -1,3 +1,5 @@
+import '../../../../widgets/ui/app_app_bar.dart';
+import '../../../../widgets/ui/app_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +10,8 @@ import '../../../expenses/data/models/budget_limit.dart';
 import '../providers/expense_sync_provider.dart';
 import '../providers/cash_book_sync_provider.dart';
 import '../providers/budget_sync_provider.dart';
+import 'package:budget_tracking_app/core/theme/app_spacing.dart';
+import 'package:budget_tracking_app/core/utils/currency_formatter.dart';
 
 import 'package:budget_tracking_app/features/my_account/presentation/providers/profile_provider.dart';
 
@@ -45,8 +49,8 @@ class _MemberDetailPageState extends ConsumerState<MemberDetailPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return AppScaffold(
+      appBar: AppAppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -102,7 +106,7 @@ class _MemberDetailPageState extends ConsumerState<MemberDetailPage>
         }
 
         return ListView.builder(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.cardPadding,
           itemCount: expenses.length,
           itemBuilder: (context, index) {
             final expense = expenses[index];
@@ -130,7 +134,7 @@ class _MemberDetailPageState extends ConsumerState<MemberDetailPage>
         }
 
         return ListView.builder(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.cardPadding,
           itemCount: entries.length,
           itemBuilder: (context, index) {
             final entry = entries[index];
@@ -158,7 +162,7 @@ class _MemberDetailPageState extends ConsumerState<MemberDetailPage>
         }
 
         return ListView.builder(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.cardPadding,
           itemCount: budgets.length,
           itemBuilder: (context, index) {
             final budget = budgets[index];
@@ -176,7 +180,7 @@ class _MemberDetailPageState extends ConsumerState<MemberDetailPage>
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: AppTheme.getSurfaceColor(context),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppSpacing.r12),
         border: Border.all(color: expense.category.color.withOpacity(0.3)),
         boxShadow: [
           BoxShadow(
@@ -204,7 +208,7 @@ class _MemberDetailPageState extends ConsumerState<MemberDetailPage>
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 4),
+            AppSpacing.gapXs,
             Text(
               DateFormat('MMM dd, yyyy').format(expense.date),
               style: TextStyle(
@@ -226,7 +230,7 @@ class _MemberDetailPageState extends ConsumerState<MemberDetailPage>
           ],
         ),
         trailing: Text(
-          '${expense.isIncome ? '+' : '-'}${NumberFormat.simpleCurrency(name: expense.currency).format(expense.amount)}',
+          '${expense.isIncome ? '+' : '-'}${CurrencyFormatter.format(expense.amount, expense.currency)}',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -246,7 +250,7 @@ class _MemberDetailPageState extends ConsumerState<MemberDetailPage>
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: AppTheme.getSurfaceColor(context),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppSpacing.r12),
         border: Border.all(color: color.withOpacity(0.3)),
         boxShadow: [
           BoxShadow(
@@ -279,7 +283,7 @@ class _MemberDetailPageState extends ConsumerState<MemberDetailPage>
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 4),
+            AppSpacing.gapXs,
             Text(
               DateFormat('MMM dd, yyyy').format(entry.date),
               style: TextStyle(
@@ -299,7 +303,7 @@ class _MemberDetailPageState extends ConsumerState<MemberDetailPage>
           ],
         ),
         trailing: Text(
-          '${isInflow ? '+' : '-'}${NumberFormat.simpleCurrency(name: currency).format(entry.amount)}',
+          '${isInflow ? '+' : '-'}${CurrencyFormatter.format(entry.amount, currency)}',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -320,7 +324,7 @@ class _MemberDetailPageState extends ConsumerState<MemberDetailPage>
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: AppTheme.getSurfaceColor(context),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppSpacing.r12),
         border: Border.all(color: categoryColor.withOpacity(0.3)),
         boxShadow: [
           BoxShadow(
@@ -351,7 +355,7 @@ class _MemberDetailPageState extends ConsumerState<MemberDetailPage>
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 4),
+            AppSpacing.gapXs,
             Text(
               period,
               style: TextStyle(
@@ -365,7 +369,7 @@ class _MemberDetailPageState extends ConsumerState<MemberDetailPage>
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              NumberFormat.simpleCurrency(name: currency).format(budget.amount),
+              CurrencyFormatter.format(budget.amount, currency),
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -392,7 +396,7 @@ class _MemberDetailPageState extends ConsumerState<MemberDetailPage>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon, size: 80, color: color.withOpacity(0.3)),
-          const SizedBox(height: 16),
+          AppSpacing.gapLg,
           Text(
             message,
             style: TextStyle(
@@ -401,7 +405,7 @@ class _MemberDetailPageState extends ConsumerState<MemberDetailPage>
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 8),
+          AppSpacing.gapSm,
           Text(
             '${widget.memberName} hasn\'t shared any data yet',
             style: TextStyle(
@@ -420,7 +424,7 @@ class _MemberDetailPageState extends ConsumerState<MemberDetailPage>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(Icons.error_outline, size: 80, color: Colors.red),
-          const SizedBox(height: 16),
+          AppSpacing.gapLg,
           Text(
             message,
             style: const TextStyle(color: Colors.red),
